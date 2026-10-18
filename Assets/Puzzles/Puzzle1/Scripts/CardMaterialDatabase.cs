@@ -19,4 +19,11 @@ public class CardMaterialDatabase : ScriptableObject
             _ => null
         };
     }
+
+    public Color GetMaterialColor (InteractableCard.CardColors color)
+    {
+        Material material = GetMaterial(color);
+        
+        return material != null ? material.color : Color.white;
+    }
 }

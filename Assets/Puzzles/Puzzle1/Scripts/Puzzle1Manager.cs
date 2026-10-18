@@ -6,6 +6,7 @@ public class Puzzle1Manager : BasePuzzle
      [SerializeField] private Player Player;
      [SerializeField] private List<CardSocket> cardSockets = new();
      [SerializeField] private List<InteractableCard> InteractableCards = new();
+     [SerializeField] private GameObject Album;
 
      public override void InitializePuzzle()
      {
@@ -111,11 +112,22 @@ public class Puzzle1Manager : BasePuzzle
      public override void ActivatePuzzle()
      {
           Player.EnableBothHandsInteractionMasks("Cards");
+          Album.SetActive(true);
+
+          foreach (InteractableCard card in InteractableCards)
+          {
+               card.gameObject.SetActive(true);
+          }
      }
 
      public override void DisablePuzzle()
      {
-          print("Puzzle 1 desativado");
+          Album.SetActive(false);
           Player.DisableBothHandsInteractionMasks("Cards");
+
+          foreach (InteractableCard card in InteractableCards)
+          {
+               card.gameObject.SetActive(false);
+          }
      }
 }
