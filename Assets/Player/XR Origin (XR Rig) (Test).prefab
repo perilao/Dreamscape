@@ -566,6 +566,7 @@ GameObject:
   - component: {fileID: 993028109701882199}
   - component: {fileID: 1955195625296699090}
   - component: {fileID: 6543399858444011799}
+  - component: {fileID: 1479822324886448422}
   m_Layer: 2
   m_Name: XR Origin (XR Rig) (Test)
   m_TagString: Untagged
@@ -626,7 +627,7 @@ CharacterController:
   m_Enabled: 1
   serializedVersion: 3
   m_Height: 1.36144
-  m_Radius: 0.1
+  m_Radius: 0.25
   m_SlopeLimit: 45
   m_StepOffset: 0.5
   m_SkinWidth: 0.08
@@ -646,6 +647,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_ActionAssets:
   - {fileID: -944628639613478452, guid: c348712bda248c246b8c49b3db54643f, type: 3}
+--- !u!114 &1479822324886448422
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3901729858424042393}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e2a5b6d43e502f41bc153cfa98bd868, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Player
+  LeftHandInteractor: {fileID: 5102365381629468042}
+  RightHandInteractor: {fileID: 6581700296797900654}
 --- !u!1 &4036632208636988301
 GameObject:
   m_ObjectHideFlags: 0
@@ -1166,7 +1181,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 626a4d6723d6ad24b9aebb811ad5a3dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.XR.Interaction.Toolkit::UnityEngine.XR.Interaction.Toolkit.Locomotion.Movement.ContinuousMoveProvider
-  m_Mediator: {fileID: 0}
+  m_Mediator: {fileID: 5390848207306637201}
   m_TransformationPriority: 0
   m_MoveSpeed: 1
   m_InAirControlModifier: 0.5
