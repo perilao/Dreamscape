@@ -7,12 +7,30 @@ public class Puzzle1Manager : BasePuzzle
      [SerializeField] private List<CardSocket> cardSockets = new();
      [SerializeField] private List<InteractableCard> InteractableCards = new();
      [SerializeField] private GameObject Album;
+     [SerializeField] private Light roomLight;
+
+     void Start()
+     {
+          if (GlobalPuzzleManager.CurrentPuzzle != this)
+          {
+               DisablePuzzle();
+          }
+     }
 
      public override void InitializePuzzle()
      {
           base.InitializePuzzle();
 
           SetupCardSockets();
+
+          Album.SetActive(true);
+
+          foreach (InteractableCard card in InteractableCards)
+          {
+               card.gameObject.SetActive(true);
+          }
+
+          roomLight.enabled = true;
      }
 
      public override void CompletePuzzle()
@@ -33,6 +51,18 @@ public class Puzzle1Manager : BasePuzzle
 
                socket.CurrentCard.SwitchColor( socket.CurrentCard.DefaultCardColor, true );
           }
+     }
+
+     protected override void DisablePuzzle()
+     {
+          Album.SetActive(false);
+
+          foreach (InteractableCard card in InteractableCards)
+          {
+               card.gameObject.SetActive(false);
+          }
+
+          roomLight.enabled = false;
      }
 
      private void SetupCardSockets()
@@ -106,28 +136,6 @@ public class Puzzle1Manager : BasePuzzle
 
                socket.CardPlaced -= OnCardPlaced;
                socket.CardRemoved -= OnCardRemoved;
-          }
-     }
-
-     public override void ActivatePuzzle()
-     {
-          Player.EnableBothHandsInteractionMasks("Cards");
-          Album.SetActive(true);
-
-          foreach (InteractableCard card in InteractableCards)
-          {
-               card.gameObject.SetActive(true);
-          }
-     }
-
-     public override void DisablePuzzle()
-     {
-          Album.SetActive(false);
-          Player.DisableBothHandsInteractionMasks("Cards");
-
-          foreach (InteractableCard card in InteractableCards)
-          {
-               card.gameObject.SetActive(false);
           }
      }
 }

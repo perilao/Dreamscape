@@ -13,11 +13,6 @@ public class FixedInteractableCard : InteractableCard
         grabInteractable.selectEntered.AddListener( OnGrab );
     }
 
-    void Start()
-    {
-        SwitchMaterial(defaultCardColor);
-    }
-
     private void OnGrab(SelectEnterEventArgs arg0)
     {
         grabInteractable.selectEntered.RemoveListener( OnGrab );

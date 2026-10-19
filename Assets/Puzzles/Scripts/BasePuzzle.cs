@@ -6,6 +6,8 @@ public abstract class BasePuzzle : MonoBehaviour
     public event Action<BasePuzzle> PuzzleInitialized;
     public event Action<BasePuzzle> PuzzleCompleted;
 
+    [SerializeField] protected GlobalPuzzleManager GlobalPuzzleManager;
+
     public bool IsCompleted { get; protected set; } = false;
 
     public int PuzzleID { get; private set; }
@@ -26,9 +28,9 @@ public abstract class BasePuzzle : MonoBehaviour
 
         IsCompleted = true;
         PuzzleCompleted?.Invoke(this);
+
+        DisablePuzzle();
     }
 
-    public abstract void ActivatePuzzle();
-
-    public abstract void DisablePuzzle();
+    protected virtual void DisablePuzzle(){}
 }

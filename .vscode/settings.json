@@ -67,6 +67,6 @@
         "*.sln": "*.csproj",
         "*.slnx": "*.csproj"
     },
-    "dotnet.defaultSolution": "UDE_4-_Periodo.slnx",
-    "editor.tabSize": 5
+    "editor.tabSize": 5,
+    "dotnet.defaultSolution": "UDE_4-_Periodo.slnx"
 }

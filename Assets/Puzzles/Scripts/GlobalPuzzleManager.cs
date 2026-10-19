@@ -16,17 +16,13 @@ public class GlobalPuzzleManager : MonoBehaviour
             if (puzzle == null)
                 PuzzleManagers.Remove(puzzle);
         }
+
+        SwitchPuzzle(0);
     }
 
     void Start()
     {
-        SwitchPuzzle(0);
-
-        foreach (BasePuzzle puzzle in PuzzleManagers)
-        {
-            if (puzzle != CurrentPuzzle) 
-                puzzle.DisablePuzzle();
-        }
+        print("Puzzle Start: " + CurrentPuzzle);
     }
 
     private void SwitchPuzzle(int index)
@@ -34,15 +30,11 @@ public class GlobalPuzzleManager : MonoBehaviour
         if (index < 0 || index >= PuzzleManagers.Count)
             return;
 
-        CurrentPuzzle.DisablePuzzle();
-
         CurrentPuzzle.PuzzleCompleted -= PuzzleCompleted;
 
         CurrentPuzzleIndex = index;
 
         CurrentPuzzle.InitializePuzzle();
-
-        CurrentPuzzle.ActivatePuzzle();
 
         CurrentPuzzle.PuzzleCompleted += PuzzleCompleted;
     }
