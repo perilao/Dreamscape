@@ -12,7 +12,7 @@ public class HingeJointListener : MonoBehaviour
     public HingeJointState hingeJointState = HingeJointState.None;
 
     public bool IgnoreNoneState = false;
-    public bool DebbugState = false;
+    public bool NanIsZero = true;
 
     public enum HingeJointState
     {
@@ -36,17 +36,17 @@ public class HingeJointListener : MonoBehaviour
         float angle = hinge.angle;
 
         if (float.IsNaN(angle) || float.IsInfinity(angle))
-            angle = 0f;
+        {
+            if (NanIsZero)
+                angle = 0f;
+            else
+                Debug.LogWarning("HingeJoint angle is NaN or Infinity. Consider setting NanIsZero to true.");
+        }
 
         JointLimits limits = hinge.limits;
 
         float angleWithMinLimit = Mathf.Abs(angle - limits.min);
         float angleWithMaxLimit = Mathf.Abs(angle - limits.max);
-
-        if (DebbugState)
-        {
-            Debug.Log($"{name} | Angle: {angle} | " + $"Min: {limits.min} | Max: {limits.max}");
-        }
 
         HingeJointState newState = HingeJointState.None;
 

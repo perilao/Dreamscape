@@ -8,7 +8,7 @@ public class GlobalPuzzleManager : MonoBehaviour
     private int CurrentPuzzleIndex = 0;
 
     public BasePuzzle CurrentPuzzle => PuzzleManagers[CurrentPuzzleIndex];
-    
+
     void Awake()
     {
         PuzzleManagers.RemoveAll(puzzle => puzzle == null);
@@ -23,14 +23,14 @@ public class GlobalPuzzleManager : MonoBehaviour
                 PuzzleManagers[i].DisablePuzzle();
             }
         }
-        
+
         SwitchPuzzle(0);
     }
 
     private void SwitchPuzzle(int index)
     {
         if (index < 0 || index >= PuzzleManagers.Count)
-            return;
+            QuitGame();
 
         CurrentPuzzle.PuzzleCompleted -= PuzzleCompleted;
 
@@ -50,5 +50,14 @@ public class GlobalPuzzleManager : MonoBehaviour
         }
 
         SwitchPuzzle(CurrentPuzzleIndex + 1);
+    }
+
+    public void QuitGame()
+    {
+        #if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+        #else
+            Application.Quit();
+        #endif
     }
 }

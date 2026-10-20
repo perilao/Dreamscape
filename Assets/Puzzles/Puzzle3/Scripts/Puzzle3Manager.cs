@@ -1,14 +1,10 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.XR.Interaction.Toolkit.Interactables;
 
 public class Puzzle3Manager : BasePuzzle
 {
-    private static readonly WaitForSeconds _waitForSeconds0_01 = new(0.01f);
-
-    [Serializable]
-    struct Puzzle3ButtonState
+    [Serializable] struct Puzzle3ButtonState
     {
         [SerializeField] private HingeJointListener button;
         [SerializeField] private HingeJointListener.HingeJointState correctState;
@@ -23,40 +19,14 @@ public class Puzzle3Manager : BasePuzzle
     [SerializeField] private List<Puzzle3ButtonState> puzzleButtons = new();
 
     [Header("Door")]
-    [SerializeField] private XRGrabInteractable doorInteractable;
-
-    [SerializeField] private Vector3 closedRotation = Vector3.zero;
-    [SerializeField] private Vector3 openedRotation = new(0f, 0f, 25f);
-
-    [SerializeField] private float openDuration = 1f;
-    [SerializeField] private float closeDuration = 0.3f;
+    [SerializeField] private InteractableDoor doorInteractable;
 
     [Header("Room")]
-    [SerializeField] private BoxCollider EnterRoomCollider;
+    [SerializeField] private EnterTriggerCollision EnterRoomCollider;
 
     [SerializeField] private Light roomLight;
 
-    private Rigidbody doorRigidbody;
-
-    private bool originalKinematicState;
-
     private List<Puzzle3ButtonState> ButtonsSequencerTemp = new();
-
-    private void Awake()
-    {
-        doorRigidbody = doorInteractable.GetComponent<Rigidbody>();
-
-        originalKinematicState = doorRigidbody.isKinematic;
-
-        doorRigidbody.isKinematic = true;
-
-        doorRigidbody.linearVelocity = Vector3.zero;
-        doorRigidbody.angularVelocity = Vector3.zero;
-
-        doorInteractable.transform.localRotation = Quaternion.Euler(closedRotation);
-
-        Physics.SyncTransforms();
-    }
 
     public override void InitializePuzzle()
     {
@@ -66,22 +36,26 @@ public class Puzzle3Manager : BasePuzzle
 
         puzzleButtons.ForEach(puzzleButton => { puzzleButton.Button?.gameObject.SetActive(true); });
 
-        SetDoorColliders(true);
+        doorInteractable.SetDoorColliders(true);
 
-        EnterRoomCollider.enabled = true;
+        EnterRoomCollider.OnPlayerEnteredRoom.RemoveAllListeners();
+
+        EnterRoomCollider.OnPlayerEnteredRoom.AddListener(OnPlayerEnteredRoom);
+
+        EnterRoomCollider.gameObject.SetActive(true);
 
         roomLight.enabled = false;
 
-        OpenDoor();
+        doorInteractable.OpenDoor();
     }
 
     public override void CompletePuzzle()
     {
         base.CompletePuzzle();
 
-        OpenDoor();
+        doorInteractable.OpenDoor();
 
-        SetDoorColliders(true);
+        doorInteractable.SetDoorColliders(true);
 
         Debug.Log("Puzzle 3 concluído!");
     }
@@ -91,10 +65,6 @@ public class Puzzle3Manager : BasePuzzle
         print("Puzzle 3 Disabled");
 
         puzzleButtons.ForEach(puzzleButton => { puzzleButton.Button?.gameObject.SetActive(false); });
-
-        SetDoorColliders(false);
-
-        SetDoorRotationImmediate(closedRotation);
     }
 
     public override void ResetPuzzle()
@@ -170,9 +140,8 @@ public class Puzzle3Manager : BasePuzzle
 
         bool isValid = count switch
         {
-            0 => index == 0,
+            0 or 3 => index is 0 or 3,
             1 or 2 => index is 1 or 2,
-            3 => index == 3,
             _ => false
         };
 
@@ -200,9 +169,6 @@ public class Puzzle3Manager : BasePuzzle
 
     private void OnDestroy()
     {
-        if (doorInteractable != null)
-            LeanTween.cancel(doorInteractable.gameObject);
-
         foreach (Puzzle3ButtonState puzzleButton in puzzleButtons)
         {
             if (puzzleButton.Button == null)
@@ -215,75 +181,11 @@ public class Puzzle3Manager : BasePuzzle
 
     public void OnPlayerEnteredRoom()
     {
-        SetDoorColliders(false);
+        doorInteractable.SetDoorColliders(false);
 
         if (EnterRoomCollider != null)
-            Destroy(EnterRoomCollider);
+            Destroy(EnterRoomCollider.gameObject);
 
-        CloseDoor();
+        doorInteractable.CloseDoor();
     }
-
-    #region Door
-
-    private void SetDoorColliders(bool enabled)
-    {
-        foreach (Collider collider in doorInteractable.colliders)
-        {
-            if (collider != null)
-                collider.enabled = enabled;
-        }
-    }
-
-    private void SetDoorRotationImmediate(Vector3 rotation)
-    {
-        LeanTween.cancel(doorInteractable.gameObject);
-
-        doorRigidbody.isKinematic = true;
-
-        doorRigidbody.linearVelocity = Vector3.zero;
-        doorRigidbody.angularVelocity = Vector3.zero;
-
-        doorInteractable.transform.localRotation = Quaternion.Euler(rotation);
-
-        Physics.SyncTransforms();
-
-        doorRigidbody.isKinematic = originalKinematicState;
-    }
-
-    private void OpenDoor()
-    {
-        AnimateDoor(openedRotation, openDuration, LeanTweenType.easeOutCubic);
-    }
-
-    private void CloseDoor()
-    {
-        AnimateDoor(closedRotation, closeDuration, LeanTweenType.linear);
-    }
-
-    private void AnimateDoor(Vector3 targetRotation, float duration, LeanTweenType easeType)
-    {
-        GameObject door = doorInteractable.gameObject;
-
-        LeanTween.cancel(door);
-
-        doorRigidbody.isKinematic = true;
-
-        doorRigidbody.linearVelocity = Vector3.zero;
-        doorRigidbody.angularVelocity = Vector3.zero;
-
-        LeanTween.rotateLocal(door, targetRotation, duration).setEase(easeType)
-        .setOnComplete(() =>
-        {
-            door.transform.localRotation = Quaternion.Euler(targetRotation);
-
-            Physics.SyncTransforms();
-
-            doorRigidbody.linearVelocity = Vector3.zero;
-            doorRigidbody.angularVelocity = Vector3.zero;
-
-            doorRigidbody.isKinematic = originalKinematicState; 
-        });
-    }
-
-    #endregion
 }
