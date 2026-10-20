@@ -1,12 +1,17 @@
 using System;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
+using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
 [RequireComponent(typeof(XRSimpleInteractable))]
+[RequireComponent(typeof(Rigidbody))]
 public class PuzzleToggleButton : PuzzleObject
 {
-    public event Action<PuzzleToggleButton> StateChanged;
+    public UnityEvent StateChanged;
+
+    private bool originalKinematicState;
 
     public enum ButtonState
     {
@@ -15,21 +20,40 @@ public class PuzzleToggleButton : PuzzleObject
     }
 
     [SerializeField] private ButtonState initialState = ButtonState.Up;
-    [SerializeField] private ButtonState correctState = ButtonState.Up;
 
-    [SerializeField] private Transform buttonVisual;
-    [SerializeField] private Vector3 upLocalPosition;
-    [SerializeField] private Vector3 downLocalPosition;
+    [SerializeField] private bool ChangeStateAtAnimationEnd = false;
+
+    [SerializeField] private Transform upLocalTransform;
+    [SerializeField] private Transform downLocalTransform;
 
     public ButtonState CurrentState { get; private set; }
-    public ButtonState CorrectState => correctState;
-    public bool IsCorrect => CurrentState == correctState;
+
+    public Rigidbody rigidbody { get; private set; }
 
     private XRSimpleInteractable interactable;
 
     private void Awake()
     {
         interactable = GetComponent<XRSimpleInteractable>();
+        rigidbody = GetComponent<Rigidbody>();
+
+        originalKinematicState = rigidbody.isKinematic;
+
+        CurrentState = initialState;
+
+        if (!rigidbody.isKinematic)
+        {
+            rigidbody.linearVelocity = Vector3.zero;
+            rigidbody.angularVelocity = Vector3.zero;
+        }
+
+        rigidbody.isKinematic = true;
+
+        Transform initialTransform = initialState == ButtonState.Up ? upLocalTransform : downLocalTransform;
+
+        transform.SetLocalPositionAndRotation(initialTransform.localPosition, initialTransform.localRotation);
+
+        Physics.SyncTransforms();
     }
 
     private void OnEnable()
@@ -40,11 +64,6 @@ public class PuzzleToggleButton : PuzzleObject
     private void OnDisable()
     {
         interactable.selectEntered.RemoveListener(OnSelected);
-    }
-
-    private void Start()
-    {
-        SetState(initialState, true);
     }
 
     private void OnSelected(SelectEnterEventArgs args)
@@ -66,13 +85,53 @@ public class PuzzleToggleButton : PuzzleObject
 
         CurrentState = newState;
 
-        UpdateVisual();
+        AnimateButton
+        (
+            newState == ButtonState.Up ? upLocalTransform : downLocalTransform,
+            0.5f,
+            LeanTweenType.easeOutCubic
+        );
 
-        StateChanged?.Invoke(this);
+        if (!ChangeStateAtAnimationEnd)
+            StateChanged?.Invoke();
     }
 
-    private void UpdateVisual()
+    private void AnimateButton(Transform targetTransform, float duration, LeanTweenType easeType)
     {
-        buttonVisual.localPosition = CurrentState == ButtonState.Up ? upLocalPosition : downLocalPosition;
+        ForceRelease();
+
+        LeanTween.cancel(gameObject);
+
+        rigidbody.isKinematic = true;
+
+        targetTransform.GetLocalPositionAndRotation(out Vector3 targetPosition, out Quaternion targetRotation);
+
+        LeanTween.moveLocal(gameObject, targetPosition, duration).setEase(easeType);
+
+        LeanTween.rotateLocal(gameObject, targetRotation.eulerAngles, duration).setEase(easeType)
+        .setOnComplete(() =>
+        {
+            transform.SetLocalPositionAndRotation(targetPosition, targetRotation);
+
+            Physics.SyncTransforms();
+
+            rigidbody.isKinematic = originalKinematicState;
+
+            if (ChangeStateAtAnimationEnd)
+                StateChanged?.Invoke();
+        });
+    }
+
+    public void ForceRelease()
+    {
+        if (!interactable.isSelected)
+            return;
+
+        XRInteractionManager interactionManager = interactable.interactionManager;
+
+        foreach (IXRSelectInteractor interactor in interactable.interactorsSelecting.ToArray())
+        {
+            interactionManager.SelectExit(interactor, interactable);
+        }
     }
 }

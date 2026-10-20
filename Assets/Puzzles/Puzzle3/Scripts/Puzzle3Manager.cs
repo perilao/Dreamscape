@@ -18,6 +18,8 @@ public class Puzzle3Manager : BasePuzzle
     [Header("Puzzle Buttons")]
     [SerializeField] private List<Puzzle3ButtonState> puzzleButtons = new();
 
+    [SerializeField] private PuzzleToggleButton hotValveButton;
+
     [Header("Door")]
     [SerializeField] private InteractableDoor doorInteractable;
 
@@ -25,6 +27,8 @@ public class Puzzle3Manager : BasePuzzle
     [SerializeField] private EnterTriggerCollision EnterRoomCollider;
 
     [SerializeField] private Light roomLight;
+
+    [SerializeField] private GameObject mirrorReferences;
 
     private List<Puzzle3ButtonState> ButtonsSequencerTemp = new();
 
@@ -46,6 +50,14 @@ public class Puzzle3Manager : BasePuzzle
 
         roomLight.enabled = false;
 
+        hotValveButton.GetComponent<BoxCollider>().enabled = true;
+
+        hotValveButton.StateChanged.RemoveAllListeners();
+
+        hotValveButton.StateChanged.AddListener(OnHotValveButtonStateChanged);
+
+        mirrorReferences.SetActive(false);
+
         doorInteractable.OpenDoor();
     }
 
@@ -53,16 +65,16 @@ public class Puzzle3Manager : BasePuzzle
     {
         base.CompletePuzzle();
 
-        doorInteractable.OpenDoor();
-
-        doorInteractable.SetDoorColliders(true);
-
         Debug.Log("Puzzle 3 concluído!");
     }
 
     public override void DisablePuzzle()
     {
-        print("Puzzle 3 Disabled");
+        doorInteractable.OpenDoor();
+
+        doorInteractable.SetDoorColliders(true);
+
+        mirrorReferences.SetActive(false);
 
         puzzleButtons.ForEach(puzzleButton => { puzzleButton.Button?.gameObject.SetActive(false); });
     }
@@ -119,6 +131,20 @@ public class Puzzle3Manager : BasePuzzle
 
         if (ButtonsSequencerTemp.Count == puzzleButtons.Count && CheckPuzzle())
             CompletePuzzle();
+    }
+
+    private void OnHotValveButtonStateChanged()
+    {
+        if (hotValveButton.CurrentState == PuzzleToggleButton.ButtonState.Down)
+        {
+            hotValveButton.StateChanged.RemoveAllListeners();
+
+            hotValveButton.GetComponent<BoxCollider>().enabled = false;
+
+            hotValveButton.ForceRelease();
+
+            mirrorReferences.SetActive(true);
+        }
     }
 
     private bool CheckButtonsSequence(Puzzle3ButtonState buttonState)
