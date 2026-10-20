@@ -5,14 +5,6 @@ public class Puzzle2Manager : BasePuzzle
 {
     [SerializeField] private List<PictureSocket> pictureSockets = new();
 
-    void Start()
-    {
-        if (GlobalPuzzleManager.CurrentPuzzle != this)
-        {
-            DisablePuzzle();
-        }
-    }
-
     public override void InitializePuzzle()
     {
         base.InitializePuzzle();
@@ -32,7 +24,7 @@ public class Puzzle2Manager : BasePuzzle
         Debug.Log("Puzzle 2 concluído!");
     }
 
-    protected override void DisablePuzzle()
+    public override void DisablePuzzle()
     {
         foreach (PictureSocket socket in pictureSockets)
         {

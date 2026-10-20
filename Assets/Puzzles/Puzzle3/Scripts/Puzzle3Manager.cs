@@ -5,6 +5,8 @@ using UnityEngine.XR.Interaction.Toolkit.Interactables;
 
 public class Puzzle3Manager : BasePuzzle
 {
+    private static readonly WaitForSeconds _waitForSeconds0_01 = new(0.01f);
+
     [Serializable]
     struct Puzzle3ButtonState
     {
@@ -32,30 +34,28 @@ public class Puzzle3Manager : BasePuzzle
     [Header("Room")]
     [SerializeField] private BoxCollider EnterRoomCollider;
 
+    [SerializeField] private Light roomLight;
+
     private Rigidbody doorRigidbody;
-    private HingeJoint doorHingeJoint;
 
     private bool originalKinematicState;
-    private bool isDoorAnimating;
+
+    private List<Puzzle3ButtonState> ButtonsSequencerTemp = new();
 
     private void Awake()
     {
         doorRigidbody = doorInteractable.GetComponent<Rigidbody>();
-        doorHingeJoint = doorInteractable.GetComponent<HingeJoint>();
 
         originalKinematicState = doorRigidbody.isKinematic;
-    }
 
-    private void Start()
-    {
-        if (GlobalPuzzleManager.CurrentPuzzle != this)
-        {
-            DisablePuzzle();
+        doorRigidbody.isKinematic = true;
 
-            SetDoorColliders(false);
+        doorRigidbody.linearVelocity = Vector3.zero;
+        doorRigidbody.angularVelocity = Vector3.zero;
 
-            SetDoorRotationImmediate(closedRotation);
-        }
+        doorInteractable.transform.localRotation = Quaternion.Euler(closedRotation);
+
+        Physics.SyncTransforms();
     }
 
     public override void InitializePuzzle()
@@ -64,15 +64,13 @@ public class Puzzle3Manager : BasePuzzle
 
         SetupButtons();
 
-        puzzleButtons.ForEach(puzzleButton =>
-        {
-            if (puzzleButton.Button != null)
-                puzzleButton.Button.gameObject.SetActive(true);
-        });
+        puzzleButtons.ForEach(puzzleButton => { puzzleButton.Button?.gameObject.SetActive(true); });
 
         SetDoorColliders(true);
 
         EnterRoomCollider.enabled = true;
+
+        roomLight.enabled = false;
 
         OpenDoor();
     }
@@ -81,31 +79,38 @@ public class Puzzle3Manager : BasePuzzle
     {
         base.CompletePuzzle();
 
+        OpenDoor();
+
         SetDoorColliders(true);
 
         Debug.Log("Puzzle 3 concluído!");
     }
 
-    protected override void DisablePuzzle()
+    public override void DisablePuzzle()
     {
-        puzzleButtons.ForEach(puzzleButton =>
-        {
-            if (puzzleButton.Button != null)
-                puzzleButton.Button.gameObject.SetActive(false);
-        });
+        print("Puzzle 3 Disabled");
+
+        puzzleButtons.ForEach(puzzleButton => { puzzleButton.Button?.gameObject.SetActive(false); });
+
+        SetDoorColliders(false);
+
+        SetDoorRotationImmediate(closedRotation);
     }
 
     public override void ResetPuzzle()
     {
+        print("Puzzle 3 Reset");
+
         IsCompleted = false;
+
+        ButtonsSequencerTemp.Clear();
 
         foreach (Puzzle3ButtonState puzzleButton in puzzleButtons)
         {
             if (puzzleButton.Button == null)
                 continue;
 
-            puzzleButton.Button.transform.eulerAngles =
-                puzzleButton.DefaultRotation;
+            puzzleButton.Button.transform.eulerAngles = puzzleButton.DefaultRotation;
         }
     }
 
@@ -118,25 +123,65 @@ public class Puzzle3Manager : BasePuzzle
             if (puzzleButton.Button == null)
                 continue;
 
-            puzzleButton.DefaultRotation =
-                puzzleButton.Button.transform.eulerAngles;
+            puzzleButton.DefaultRotation = puzzleButton.Button.transform.eulerAngles;
 
-            puzzleButton.Button.OnMinLimitReached.RemoveListener(OnButtonStateChanged);
-            puzzleButton.Button.OnMaxLimitReached.RemoveListener(OnButtonStateChanged);
+            puzzleButton.Button.OnMinLimitReached.RemoveAllListeners();
+            puzzleButton.Button.OnMaxLimitReached.RemoveAllListeners();
 
-            puzzleButton.Button.OnMinLimitReached.AddListener(OnButtonStateChanged);
-            puzzleButton.Button.OnMaxLimitReached.AddListener(OnButtonStateChanged);
+            puzzleButton.Button.OnMinLimitReached.AddListener(() => OnButtonStateChanged(puzzleButton));
+
+            puzzleButton.Button.OnMaxLimitReached.AddListener(() => OnButtonStateChanged(puzzleButton));
 
             puzzleButtons[i] = puzzleButton;
         }
     }
 
-    private void OnButtonStateChanged()
+    private void OnButtonStateChanged(Puzzle3ButtonState buttonState)
     {
-        if (CheckPuzzle())
-            CompletePuzzle();
-        else
+        if (IsCompleted)
+            return;
+
+        if (!CheckButtonsSequence(buttonState))
+        {
             ResetPuzzle();
+            return;
+        }
+
+        if (ButtonsSequencerTemp.Count == puzzleButtons.Count && CheckPuzzle())
+            CompletePuzzle();
+    }
+
+    private bool CheckButtonsSequence(Puzzle3ButtonState buttonState)
+    {
+        int index = puzzleButtons.FindIndex(button => button.Button == buttonState.Button);
+
+        if (index < 0)
+            return false;
+
+        // O botão precisa estar no estado correto.
+        if (buttonState.Button.hingeJointState != buttonState.CorrectState)
+            return false;
+
+        // Não permite acionar novamente um botão já registrado.
+        if (ButtonsSequencerTemp.Exists(button => button.Button == buttonState.Button))
+            return false;
+
+        int count = ButtonsSequencerTemp.Count;
+
+        bool isValid = count switch
+        {
+            0 => index == 0,
+            1 or 2 => index is 1 or 2,
+            3 => index == 3,
+            _ => false
+        };
+
+        if (!isValid)
+            return false;
+
+        ButtonsSequencerTemp.Add(buttonState);
+
+        return true;
     }
 
     private bool CheckPuzzle()
@@ -163,8 +208,8 @@ public class Puzzle3Manager : BasePuzzle
             if (puzzleButton.Button == null)
                 continue;
 
-            puzzleButton.Button.OnMinLimitReached.RemoveListener(OnButtonStateChanged);
-            puzzleButton.Button.OnMaxLimitReached.RemoveListener(OnButtonStateChanged);
+            puzzleButton.Button.OnMinLimitReached.RemoveAllListeners();
+            puzzleButton.Button.OnMaxLimitReached.RemoveAllListeners();
         }
     }
 
@@ -193,8 +238,6 @@ public class Puzzle3Manager : BasePuzzle
     {
         LeanTween.cancel(doorInteractable.gameObject);
 
-        isDoorAnimating = false;
-
         doorRigidbody.isKinematic = true;
 
         doorRigidbody.linearVelocity = Vector3.zero;
@@ -209,7 +252,7 @@ public class Puzzle3Manager : BasePuzzle
 
     private void OpenDoor()
     {
-        AnimateDoor( openedRotation, openDuration, LeanTweenType.easeOutCubic );
+        AnimateDoor(openedRotation, openDuration, LeanTweenType.easeOutCubic);
     }
 
     private void CloseDoor()
@@ -222,8 +265,6 @@ public class Puzzle3Manager : BasePuzzle
         GameObject door = doorInteractable.gameObject;
 
         LeanTween.cancel(door);
-
-        isDoorAnimating = true;
 
         doorRigidbody.isKinematic = true;
 
@@ -240,9 +281,7 @@ public class Puzzle3Manager : BasePuzzle
             doorRigidbody.linearVelocity = Vector3.zero;
             doorRigidbody.angularVelocity = Vector3.zero;
 
-            doorRigidbody.isKinematic = originalKinematicState;
-
-            isDoorAnimating = false;
+            doorRigidbody.isKinematic = originalKinematicState; 
         });
     }
 

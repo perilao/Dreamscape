@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class GlobalPuzzleManager : MonoBehaviour
 {
-    [SerializeField] private List<BasePuzzle> PuzzleManagers = new();
+    public List<BasePuzzle> PuzzleManagers = new();
 
     private int CurrentPuzzleIndex = 0;
 
@@ -11,18 +11,20 @@ public class GlobalPuzzleManager : MonoBehaviour
     
     void Awake()
     {
-        foreach (BasePuzzle puzzle in PuzzleManagers)
-        {
-            if (puzzle == null)
-                PuzzleManagers.Remove(puzzle);
-        }
-
-        SwitchPuzzle(0);
+        PuzzleManagers.RemoveAll(puzzle => puzzle == null);
     }
 
     void Start()
     {
-        print("Puzzle Start: " + CurrentPuzzle);
+        if (PuzzleManagers.Count > 1)
+        {
+            for (int i = 1; i < PuzzleManagers.Count; i++)
+            {
+                PuzzleManagers[i].DisablePuzzle();
+            }
+        }
+        
+        SwitchPuzzle(0);
     }
 
     private void SwitchPuzzle(int index)

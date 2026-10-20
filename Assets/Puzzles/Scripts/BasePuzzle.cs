@@ -32,5 +32,5 @@ public abstract class BasePuzzle : MonoBehaviour
         DisablePuzzle();
     }
 
-    protected virtual void DisablePuzzle(){}
+    public virtual void DisablePuzzle(){}
 }

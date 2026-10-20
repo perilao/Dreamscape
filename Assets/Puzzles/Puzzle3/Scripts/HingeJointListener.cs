@@ -1,22 +1,29 @@
 using UnityEngine;
 using UnityEngine.Events;
 
+[RequireComponent(typeof(HingeJoint))]
 public class HingeJointListener : MonoBehaviour
 {
-    //Event called on min reached
     public UnityEvent OnMinLimitReached;
-    //Event called on max reached
     public UnityEvent OnMaxLimitReached;
 
-    //angle threshold to trigger if we reached limit
-    public float angleBetweenThreshold = 1f;
-    //State of the hinge joint : either reached min or max or none if in between
+    [SerializeField] private float angleBetweenThreshold = 1f;
+
     public HingeJointState hingeJointState = HingeJointState.None;
 
-    public enum HingeJointState { Min,Max,None }
+    public bool IgnoreNoneState = false;
+    public bool DebbugState = false;
+
+    public enum HingeJointState
+    {
+        Min,
+        Max,
+        None
+    }
+
     private HingeJoint hinge;
 
-    void Awake()
+    private void Awake()
     {
         hinge = GetComponent<HingeJoint>();
     }
@@ -25,30 +32,51 @@ public class HingeJointListener : MonoBehaviour
     {
         if (hinge == null)
             return;
-        
-        float angleWithMinLimit = Mathf.Abs(hinge.angle - hinge.limits.min);
-        float angleWithMaxLimit = Mathf.Abs(hinge.angle - hinge.limits.max);
 
-        //Reached Min
-        if(angleWithMinLimit < angleBetweenThreshold)
+        float angle = hinge.angle;
+
+        if (float.IsNaN(angle) || float.IsInfinity(angle))
+            angle = 0f;
+
+        JointLimits limits = hinge.limits;
+
+        float angleWithMinLimit = Mathf.Abs(angle - limits.min);
+        float angleWithMaxLimit = Mathf.Abs(angle - limits.max);
+
+        if (DebbugState)
         {
-            if (hingeJointState != HingeJointState.Min)
+            Debug.Log($"{name} | Angle: {angle} | " + $"Min: {limits.min} | Max: {limits.max}");
+        }
+
+        HingeJointState newState = HingeJointState.None;
+
+        if (angleWithMinLimit <= angleBetweenThreshold)
+        {
+            newState = HingeJointState.Min;
+        }
+        else if (angleWithMaxLimit <= angleBetweenThreshold)
+        {
+            newState = HingeJointState.Max;
+        }
+
+        // Evita disparar eventos repetidamente.
+        if (newState == hingeJointState)
+            return;
+
+        if (newState == HingeJointState.None && IgnoreNoneState)
+            return;
+
+        hingeJointState = newState;
+
+        switch (newState)
+        {
+            case HingeJointState.Min:
                 OnMinLimitReached?.Invoke();
+                break;
 
-            hingeJointState = HingeJointState.Min;
-        }
-        //Reached Max
-        else if (angleWithMaxLimit < angleBetweenThreshold)
-        {
-            if (hingeJointState != HingeJointState.Max)
+            case HingeJointState.Max:
                 OnMaxLimitReached?.Invoke();
-
-            hingeJointState = HingeJointState.Max;
-        }
-        //No Limit reached
-        else
-        {
-            hingeJointState = HingeJointState.None;
+                break;
         }
     }
 }

@@ -9,14 +9,6 @@ public class Puzzle1Manager : BasePuzzle
      [SerializeField] private GameObject Album;
      [SerializeField] private Light roomLight;
 
-     void Start()
-     {
-          if (GlobalPuzzleManager.CurrentPuzzle != this)
-          {
-               DisablePuzzle();
-          }
-     }
-
      public override void InitializePuzzle()
      {
           base.InitializePuzzle();
@@ -36,8 +28,6 @@ public class Puzzle1Manager : BasePuzzle
      public override void CompletePuzzle()
      {
           base.CompletePuzzle();
-
-          Debug.Log("Puzzle 1 concluído!");
      }
 
      public override void ResetPuzzle()
@@ -53,7 +43,7 @@ public class Puzzle1Manager : BasePuzzle
           }
      }
 
-     protected override void DisablePuzzle()
+     public override void DisablePuzzle()
      {
           Album.SetActive(false);
 
@@ -61,8 +51,6 @@ public class Puzzle1Manager : BasePuzzle
           {
                card.gameObject.SetActive(false);
           }
-
-          roomLight.enabled = false;
      }
 
      private void SetupCardSockets()
