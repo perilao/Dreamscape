@@ -31289,8 +31289,8 @@ MonoBehaviour:
   roomLight:
   - {fileID: 1873780011}
   - {fileID: 2069704800}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 1681419710}
+  - {fileID: 1795641499}
   mirrorReferences: {fileID: 219563319}
 --- !u!4 &1022379441
 Transform:
