@@ -32,6 +32,11 @@ public class Puzzle3Manager : BasePuzzle
 
     private List<Puzzle3ButtonState> ButtonsSequencerTemp = new();
 
+    [Header("Áudio")]
+    [SerializeField] private AudioSource music;
+    [SerializeField] private AudioSource susurro;
+    [SerializeField] private AudioSource openDoor;
+
     public override void InitializePuzzle()
     {
         base.InitializePuzzle();
@@ -59,6 +64,10 @@ public class Puzzle3Manager : BasePuzzle
         mirrorReferences.SetActive(false);
 
         doorInteractable.OpenDoor();
+
+        music.Play();
+        openDoor.Play();
+        susurro.Play();
     }
 
     public override void CompletePuzzle()
@@ -68,6 +77,8 @@ public class Puzzle3Manager : BasePuzzle
         SetupLight(true);
 
         doorInteractable.OpenDoor();
+
+        music.Stop();
 
         Debug.Log("Puzzle 3 concluído!");
     }

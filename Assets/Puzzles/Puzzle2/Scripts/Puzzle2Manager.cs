@@ -41,6 +41,12 @@ public class Puzzle2Manager : BasePuzzle
     [SerializeField] private Transform painting4Transform;
     [SerializeField] private GameObject puzzle2temp;
 
+    [Header("Áudio")]
+    [SerializeField] private AudioSource music;
+    [SerializeField] private AudioSource susurro;
+    [SerializeField] private AudioSource susurrofinish;
+    [SerializeField] private AudioSource openDoor;
+
     public override void InitializePuzzle()
     {
         base.InitializePuzzle();
@@ -49,7 +55,9 @@ public class Puzzle2Manager : BasePuzzle
 
         SetupPictureSockets();
 
-        exitdoorInteractable.OpenDoor();
+        music.Play();
+        openDoor.Play();
+        susurro.Play();
 
         foreach (PictureSocket socket in pictureSockets)
         {
@@ -61,6 +69,8 @@ public class Puzzle2Manager : BasePuzzle
         EnterRoomCollider.OnPlayerEnteredRoom.AddListener(OnPlayerEnteredRoom);
 
         EnterRoomCollider.gameObject.SetActive(true);
+
+        exitdoorInteractable.OpenDoor();
 
         puzzle2temp.SetActive(true);
     }
@@ -74,7 +84,15 @@ public class Puzzle2Manager : BasePuzzle
     {
         base.CompletePuzzle();
 
-        puzzle2temp.SetActive(false);
+        //puzzle2temp.SetActive(false);
+
+        doorInteractable.SetDoorColliders(true);
+
+        exitdoorInteractable.OpenDoor();
+
+        openDoor.Play();
+
+        susurrofinish.Play();
 
         Debug.Log("Puzzle 2 concluído!");
 
