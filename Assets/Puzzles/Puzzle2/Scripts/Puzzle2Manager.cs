@@ -70,7 +70,6 @@ public class Puzzle2Manager : BasePuzzle
 
         EnterRoomCollider.gameObject.SetActive(true);
 
-        exitdoorInteractable.OpenDoor();
 
         puzzle2temp.SetActive(true);
     }
