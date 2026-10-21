@@ -67,6 +67,8 @@ public class Puzzle3Manager : BasePuzzle
 
         SetupLight(true);
 
+        doorInteractable.OpenDoor();
+
         Debug.Log("Puzzle 3 concluído!");
     }
 

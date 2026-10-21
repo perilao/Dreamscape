@@ -14,6 +14,9 @@ public class Puzzle2Manager : BasePuzzle
     [Header("Door")]
     [SerializeField] private InteractableDoor doorInteractable;
 
+    [Header("ExitDoor")]
+    [SerializeField] private InteractableDoor exitdoorInteractable;
+
     [Header("Room Game Objects")]
     [SerializeField] private GameObject bed;
     [SerializeField] private GameObject window;
@@ -36,7 +39,8 @@ public class Puzzle2Manager : BasePuzzle
     [SerializeField] private Transform painting2Transform;
     [SerializeField] private Transform painting3Transform;
     [SerializeField] private Transform painting4Transform;
-    
+    [SerializeField] private GameObject puzzle2temp;
+
     public override void InitializePuzzle()
     {
         base.InitializePuzzle();
@@ -45,11 +49,20 @@ public class Puzzle2Manager : BasePuzzle
 
         SetupPictureSockets();
 
+        exitdoorInteractable.OpenDoor();
+
+        foreach (PictureSocket socket in pictureSockets)
+        {
+            socket.gameObject.SetActive(true);
+        }
+
         EnterRoomCollider.OnPlayerEnteredRoom.RemoveAllListeners();
 
         EnterRoomCollider.OnPlayerEnteredRoom.AddListener(OnPlayerEnteredRoom);
 
         EnterRoomCollider.gameObject.SetActive(true);
+
+        puzzle2temp.SetActive(true);
     }
 
     public override void ResetPuzzle()
@@ -60,6 +73,8 @@ public class Puzzle2Manager : BasePuzzle
     public override void CompletePuzzle()
     {
         base.CompletePuzzle();
+
+        puzzle2temp.SetActive(false);
 
         Debug.Log("Puzzle 2 concluído!");
 
@@ -130,7 +145,8 @@ public class Puzzle2Manager : BasePuzzle
             roomLight2.color = new(0.7056604f, 0f, 0.04969675f);
             roomLight2.enabled = true;
 
-            directionalLight.enabled = false;
+            //directionalLight.color = new(0.7056604f, 0f, 0.04969675f);
+            directionalLight.enabled = true;
 
             spotLight.color = new(0.7056604f, 0f, 0.04969675f);
             spotLight.enabled = true;
