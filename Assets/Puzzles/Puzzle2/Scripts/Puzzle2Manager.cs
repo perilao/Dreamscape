@@ -19,6 +19,10 @@ public class Puzzle2Manager : BasePuzzle
     [SerializeField] private GameObject window;
     [SerializeField] private GameObject wardrobe;
     [SerializeField] private Light roomLight;
+    [SerializeField] private Light roomLight2;
+    [SerializeField] private Light directionalLight;
+    [SerializeField] private Light spotLight;
+    [SerializeField] private Light bathLight;
     [SerializeField] private GameObject painting1;
     [SerializeField] private GameObject painting2;
     [SerializeField] private GameObject painting3;
@@ -122,6 +126,16 @@ public class Puzzle2Manager : BasePuzzle
         {
             roomLight.color = new (0.7056604f, 0f, 0.04969675f);
             roomLight.enabled = true;
+
+            roomLight2.color = new(0.7056604f, 0f, 0.04969675f);
+            roomLight2.enabled = true;
+
+            directionalLight.enabled = false;
+
+            spotLight.color = new(0.7056604f, 0f, 0.04969675f);
+            spotLight.enabled = true;
+
+            bathLight.enabled = false;
         }
     }
 

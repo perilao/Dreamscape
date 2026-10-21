@@ -26,7 +26,7 @@ public class Puzzle3Manager : BasePuzzle
     [Header("Room")]
     [SerializeField] private EnterTriggerCollision EnterRoomCollider;
 
-    [SerializeField] private Light roomLight;
+    [SerializeField] private  List<Light> roomLight = new();
 
     [SerializeField] private GameObject mirrorReferences;
 
@@ -38,6 +38,8 @@ public class Puzzle3Manager : BasePuzzle
 
         SetupButtons();
 
+        SetupLight(false);
+
         puzzleButtons.ForEach(puzzleButton => { puzzleButton.Button?.gameObject.SetActive(true); });
 
         doorInteractable.SetDoorColliders(true);
@@ -47,8 +49,6 @@ public class Puzzle3Manager : BasePuzzle
         EnterRoomCollider.OnPlayerEnteredRoom.AddListener(OnPlayerEnteredRoom);
 
         EnterRoomCollider.gameObject.SetActive(true);
-
-        roomLight.enabled = false;
 
         hotValveButton.GetComponent<BoxCollider>().enabled = true;
 
@@ -64,6 +64,8 @@ public class Puzzle3Manager : BasePuzzle
     public override void CompletePuzzle()
     {
         base.CompletePuzzle();
+
+        SetupLight(true);
 
         Debug.Log("Puzzle 3 concluído!");
     }
@@ -213,5 +215,13 @@ public class Puzzle3Manager : BasePuzzle
             Destroy(EnterRoomCollider.gameObject);
 
         doorInteractable.CloseDoor();
+    }
+
+    private void SetupLight(bool IsEnabled)
+    {
+        foreach (Light lampada in roomLight)
+        {
+            lampada.enabled = IsEnabled;
+        }
     }
 }
