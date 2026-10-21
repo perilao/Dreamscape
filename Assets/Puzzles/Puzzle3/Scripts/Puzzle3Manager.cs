@@ -26,17 +26,24 @@ public class Puzzle3Manager : BasePuzzle
     [Header("Room")]
     [SerializeField] private EnterTriggerCollision EnterRoomCollider;
 
-    [SerializeField] private Light roomLight;
+    [SerializeField] private  List<Light> roomLight = new();
 
     [SerializeField] private GameObject mirrorReferences;
 
     private List<Puzzle3ButtonState> ButtonsSequencerTemp = new();
+
+    [Header("Áudio")]
+    [SerializeField] private AudioSource music;
+    [SerializeField] private AudioSource susurro;
+    [SerializeField] private AudioSource openDoor;
 
     public override void InitializePuzzle()
     {
         base.InitializePuzzle();
 
         SetupButtons();
+
+        SetupLight(false);
 
         puzzleButtons.ForEach(puzzleButton => { puzzleButton.Button?.gameObject.SetActive(true); });
 
@@ -48,8 +55,6 @@ public class Puzzle3Manager : BasePuzzle
 
         EnterRoomCollider.gameObject.SetActive(true);
 
-        roomLight.enabled = false;
-
         hotValveButton.GetComponent<BoxCollider>().enabled = true;
 
         hotValveButton.StateChanged.RemoveAllListeners();
@@ -59,11 +64,21 @@ public class Puzzle3Manager : BasePuzzle
         mirrorReferences.SetActive(false);
 
         doorInteractable.OpenDoor();
+
+        music.Play();
+        openDoor.Play();
+        susurro.Play();
     }
 
     public override void CompletePuzzle()
     {
         base.CompletePuzzle();
+
+        SetupLight(true);
+
+        doorInteractable.OpenDoor();
+
+        music.Stop();
 
         Debug.Log("Puzzle 3 concluído!");
     }
@@ -213,5 +228,13 @@ public class Puzzle3Manager : BasePuzzle
             Destroy(EnterRoomCollider.gameObject);
 
         doorInteractable.CloseDoor();
+    }
+
+    private void SetupLight(bool IsEnabled)
+    {
+        foreach (Light lampada in roomLight)
+        {
+            lampada.enabled = IsEnabled;
+        }
     }
 }

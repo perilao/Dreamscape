@@ -29,8 +29,12 @@ public class GlobalPuzzleManager : MonoBehaviour
 
     private void SwitchPuzzle(int index)
     {
-        if (index < 0 || index >= PuzzleManagers.Count)
-            QuitGame();
+        if (index < 0 || index >= PuzzleManagers.Count) 
+        { 
+            //QuitGame();
+            return;
+        }
+
 
         CurrentPuzzle.PuzzleCompleted -= PuzzleCompleted;
 
