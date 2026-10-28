@@ -14,11 +14,18 @@ public class Puzzle2Manager : BasePuzzle
     [Header("Door")]
     [SerializeField] private InteractableDoor doorInteractable;
 
+    [Header("ExitDoor")]
+    [SerializeField] private InteractableDoor exitdoorInteractable;
+
     [Header("Room Game Objects")]
     [SerializeField] private GameObject bed;
     [SerializeField] private GameObject window;
     [SerializeField] private GameObject wardrobe;
     [SerializeField] private Light roomLight;
+    [SerializeField] private Light roomLight2;
+    [SerializeField] private Light directionalLight;
+    [SerializeField] private Light spotLight;
+    [SerializeField] private Light bathLight;
     [SerializeField] private GameObject painting1;
     [SerializeField] private GameObject painting2;
     [SerializeField] private GameObject painting3;
@@ -32,7 +39,14 @@ public class Puzzle2Manager : BasePuzzle
     [SerializeField] private Transform painting2Transform;
     [SerializeField] private Transform painting3Transform;
     [SerializeField] private Transform painting4Transform;
-    
+    [SerializeField] private GameObject puzzle2temp;
+
+    [Header("Áudio")]
+    [SerializeField] private AudioSource music;
+    [SerializeField] private AudioSource susurro;
+    [SerializeField] private AudioSource susurrofinish;
+    [SerializeField] private AudioSource openDoor;
+
     public override void InitializePuzzle()
     {
         base.InitializePuzzle();
@@ -41,11 +55,23 @@ public class Puzzle2Manager : BasePuzzle
 
         SetupPictureSockets();
 
+        music.Play();
+        openDoor.Play();
+        susurro.Play();
+
+        foreach (PictureSocket socket in pictureSockets)
+        {
+            socket.gameObject.SetActive(true);
+        }
+
         EnterRoomCollider.OnPlayerEnteredRoom.RemoveAllListeners();
 
         EnterRoomCollider.OnPlayerEnteredRoom.AddListener(OnPlayerEnteredRoom);
 
         EnterRoomCollider.gameObject.SetActive(true);
+
+
+        puzzle2temp.SetActive(true);
     }
 
     public override void ResetPuzzle()
@@ -56,6 +82,16 @@ public class Puzzle2Manager : BasePuzzle
     public override void CompletePuzzle()
     {
         base.CompletePuzzle();
+
+        //puzzle2temp.SetActive(false);
+
+        doorInteractable.SetDoorColliders(true);
+
+        exitdoorInteractable.OpenDoor();
+
+        openDoor.Play();
+
+        susurrofinish.Play();
 
         Debug.Log("Puzzle 2 concluído!");
 
@@ -122,6 +158,17 @@ public class Puzzle2Manager : BasePuzzle
         {
             roomLight.color = new (0.7056604f, 0f, 0.04969675f);
             roomLight.enabled = true;
+
+            roomLight2.color = new(0.7056604f, 0f, 0.04969675f);
+            roomLight2.enabled = true;
+
+            //directionalLight.color = new(0.7056604f, 0f, 0.04969675f);
+            directionalLight.enabled = true;
+
+            spotLight.color = new(0.7056604f, 0f, 0.04969675f);
+            spotLight.enabled = true;
+
+            bathLight.enabled = false;
         }
     }
 

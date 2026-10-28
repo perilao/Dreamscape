@@ -9,7 +9,14 @@ public class Puzzle1Manager : BasePuzzle
      [SerializeField] private GameObject Album;
      [SerializeField] private Light roomLight;
 
-     public override void InitializePuzzle()
+    [Header("Door")]
+    [SerializeField] private InteractableDoor doorInteractable;
+
+    [Header("Áudio")]
+    [SerializeField] private AudioSource music;
+    [SerializeField] private AudioSource openDoor;
+
+    public override void InitializePuzzle()
      {
           base.InitializePuzzle();
 
@@ -23,12 +30,18 @@ public class Puzzle1Manager : BasePuzzle
           }
 
           roomLight.enabled = true;
-     }
+
+          doorInteractable.CloseDoor();
+
+          music.Play();
+    }
 
      public override void CompletePuzzle()
      {
           base.CompletePuzzle();
-     }
+
+          music.Stop();
+    }
 
      public override void ResetPuzzle()
      {
