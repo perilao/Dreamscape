@@ -18,20 +18,21 @@ public class Puzzle2Manager : BasePuzzle
     [SerializeField] private InteractableDoor exitdoorInteractable;
 
     [Header("Room Game Objects")]
+    [SerializeField] private GameObject laptop;
     [SerializeField] private GameObject bed;
     [SerializeField] private GameObject window;
     [SerializeField] private GameObject wardrobe;
     [SerializeField] private Light roomLight;
     [SerializeField] private Light roomLight2;
     [SerializeField] private Light directionalLight;
-    [SerializeField] private Light spotLight;
     [SerializeField] private Light bathLight;
-    [SerializeField] private GameObject painting1;
-    [SerializeField] private GameObject painting2;
-    [SerializeField] private GameObject painting3;
-    [SerializeField] private GameObject painting4;
+    [SerializeField] private InteractablePicture painting1;
+    [SerializeField] private InteractablePicture painting2;
+    [SerializeField] private InteractablePicture painting3;
+    [SerializeField] private InteractablePicture painting4;
 
     [Header("Puzzle Room Setup")]
+    [SerializeField] private Transform laptopTransform;
     [SerializeField] private Transform bedTransform;
     [SerializeField] private Transform windowTransform;
     [SerializeField] private Transform wardrobeTransform;
@@ -39,7 +40,6 @@ public class Puzzle2Manager : BasePuzzle
     [SerializeField] private Transform painting2Transform;
     [SerializeField] private Transform painting3Transform;
     [SerializeField] private Transform painting4Transform;
-    [SerializeField] private GameObject puzzle2temp;
 
     [Header("Áudio")]
     [SerializeField] private AudioSource music;
@@ -53,7 +53,7 @@ public class Puzzle2Manager : BasePuzzle
 
         SetupPuzzleRoom();
 
-        SetupPictureSockets();
+        SetupPictures();
 
         music.Play();
         openDoor.Play();
@@ -69,9 +69,6 @@ public class Puzzle2Manager : BasePuzzle
         EnterRoomCollider.OnPlayerEnteredRoom.AddListener(OnPlayerEnteredRoom);
 
         EnterRoomCollider.gameObject.SetActive(true);
-
-
-        puzzle2temp.SetActive(true);
     }
 
     public override void ResetPuzzle()
@@ -83,8 +80,6 @@ public class Puzzle2Manager : BasePuzzle
     {
         base.CompletePuzzle();
 
-        //puzzle2temp.SetActive(false);
-
         doorInteractable.SetDoorColliders(true);
 
         exitdoorInteractable.OpenDoor();
@@ -94,8 +89,6 @@ public class Puzzle2Manager : BasePuzzle
         susurrofinish.Play();
 
         Debug.Log("Puzzle 2 concluído!");
-
-        
     }
 
     public override void DisablePuzzle()
@@ -106,23 +99,35 @@ public class Puzzle2Manager : BasePuzzle
         }
     }
 
-    private void SetupPictureSockets()
+    private void SetupPictures()
     {
         foreach (PictureSocket socket in pictureSockets)
         {
             socket.PicturePlaced -= OnPictureChanged;
             socket.PicturePlaced += OnPictureChanged;
         }
+
+        InteractablePicture[] pictures = new[] { painting1, painting2, painting3, painting4 };
+
+        foreach (InteractablePicture picture in pictures)
+        {
+            picture.GetComponent<BoxCollider>().enabled = true;
+        }
     }
 
     private void SetupPuzzleRoom()
     {
         // Set the positions, rotations and scales of the room objects based on the predefined transforms
+        if (laptop != null)
+        {
+            laptop.transform.SetLocalPositionAndRotation(laptopTransform.position, laptopTransform.rotation);
+            laptop.transform.localScale = laptopTransform.localScale;
+        }
         if (bed != null)
         {
             bed.transform.SetLocalPositionAndRotation(bedTransform.position, bedTransform.rotation);
             bed.transform.localScale = bedTransform.localScale;
-            bed.GetComponent<BoxCollider>().enabled = false; 
+            bed.GetComponent<BoxCollider>().enabled = false;
         }
         if (window != null)
         {
@@ -156,17 +161,14 @@ public class Puzzle2Manager : BasePuzzle
         }
         if (roomLight != null)
         {
-            roomLight.color = new (0.7056604f, 0f, 0.04969675f);
+            roomLight.color = new(0.7056604f, 0f, 0.04969675f);
             roomLight.enabled = true;
 
             roomLight2.color = new(0.7056604f, 0f, 0.04969675f);
             roomLight2.enabled = true;
 
             //directionalLight.color = new(0.7056604f, 0f, 0.04969675f);
-            directionalLight.enabled = true;
-
-            spotLight.color = new(0.7056604f, 0f, 0.04969675f);
-            spotLight.enabled = true;
+            directionalLight.enabled = false;
 
             bathLight.enabled = false;
         }

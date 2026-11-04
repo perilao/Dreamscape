@@ -134,4 +134,19 @@ public class PuzzleToggleButton : PuzzleObject
             interactionManager.SelectExit(interactor, interactable);
         }
     }
+
+    public void ResetButton()
+    {
+        LeanTween.cancel(gameObject);
+
+        CurrentState = initialState;
+
+        Transform target = initialState == ButtonState.Up ? upLocalTransform : downLocalTransform;
+
+        transform.SetLocalPositionAndRotation( target.localPosition, target.localRotation );
+
+        rigidbody.isKinematic = true;
+
+        Physics.SyncTransforms();
+    }
 }

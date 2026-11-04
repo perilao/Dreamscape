@@ -4,15 +4,16 @@ using UnityEngine;
 
 public class Puzzle3Manager : BasePuzzle
 {
-    [Serializable] struct Puzzle3ButtonState
+    [Serializable]
+    struct Puzzle3ButtonState
     {
-        [SerializeField] private HingeJointListener button;
-        [SerializeField] private HingeJointListener.HingeJointState correctState;
+        [SerializeField] private PuzzleToggleButton button;
+        [SerializeField] private PuzzleToggleButton.ButtonState correctState;
 
         [HideInInspector] public Vector3 DefaultRotation;
 
-        public readonly HingeJointListener Button => button;
-        public readonly HingeJointListener.HingeJointState CorrectState => correctState;
+        public readonly PuzzleToggleButton Button => button;
+        public readonly PuzzleToggleButton.ButtonState CorrectState => correctState;
     }
 
     [Header("Puzzle Buttons")]
@@ -26,7 +27,9 @@ public class Puzzle3Manager : BasePuzzle
     [Header("Room")]
     [SerializeField] private EnterTriggerCollision EnterRoomCollider;
 
-    [SerializeField] private  List<Light> roomLight = new();
+    [SerializeField] private List<Light> roomLight = new();
+
+    [SerializeField] private Light directionalLight;
 
     [SerializeField] private GameObject mirrorReferences;
 
@@ -58,7 +61,6 @@ public class Puzzle3Manager : BasePuzzle
         hotValveButton.GetComponent<BoxCollider>().enabled = true;
 
         hotValveButton.StateChanged.RemoveAllListeners();
-
         hotValveButton.StateChanged.AddListener(OnHotValveButtonStateChanged);
 
         mirrorReferences.SetActive(false);
@@ -85,10 +87,6 @@ public class Puzzle3Manager : BasePuzzle
 
     public override void DisablePuzzle()
     {
-        doorInteractable.OpenDoor();
-
-        doorInteractable.SetDoorColliders(true);
-
         mirrorReferences.SetActive(false);
 
         puzzleButtons.ForEach(puzzleButton => { puzzleButton.Button?.gameObject.SetActive(false); });
@@ -96,7 +94,7 @@ public class Puzzle3Manager : BasePuzzle
 
     public override void ResetPuzzle()
     {
-        print("Puzzle 3 Reset");
+        Debug.Log("Puzzle 3 Reset");
 
         IsCompleted = false;
 
@@ -107,12 +105,14 @@ public class Puzzle3Manager : BasePuzzle
             if (puzzleButton.Button == null)
                 continue;
 
-            puzzleButton.Button.transform.eulerAngles = puzzleButton.DefaultRotation;
+            puzzleButton.Button.ResetButton();
         }
     }
 
     private void SetupButtons()
     {
+        ButtonsSequencerTemp.Clear();
+
         for (int i = 0; i < puzzleButtons.Count; i++)
         {
             Puzzle3ButtonState puzzleButton = puzzleButtons[i];
@@ -122,12 +122,9 @@ public class Puzzle3Manager : BasePuzzle
 
             puzzleButton.DefaultRotation = puzzleButton.Button.transform.eulerAngles;
 
-            puzzleButton.Button.OnMinLimitReached.RemoveAllListeners();
-            puzzleButton.Button.OnMaxLimitReached.RemoveAllListeners();
+            puzzleButton.Button.StateChanged.RemoveAllListeners();
 
-            puzzleButton.Button.OnMinLimitReached.AddListener(() => OnButtonStateChanged(puzzleButton));
-
-            puzzleButton.Button.OnMaxLimitReached.AddListener(() => OnButtonStateChanged(puzzleButton));
+            puzzleButton.Button.StateChanged.AddListener( () => OnButtonStateChanged(puzzleButton) );
 
             puzzleButtons[i] = puzzleButton;
         }
@@ -170,7 +167,7 @@ public class Puzzle3Manager : BasePuzzle
             return false;
 
         // O botão precisa estar no estado correto.
-        if (buttonState.Button.hingeJointState != buttonState.CorrectState)
+        if (buttonState.Button.CurrentState != buttonState.CorrectState)
             return false;
 
         // Não permite acionar novamente um botão já registrado.
@@ -201,7 +198,7 @@ public class Puzzle3Manager : BasePuzzle
 
         foreach (Puzzle3ButtonState puzzleButton in puzzleButtons)
         {
-            if (puzzleButton.Button == null || puzzleButton.Button.hingeJointState != puzzleButton.CorrectState)
+            if (puzzleButton.Button == null || puzzleButton.Button.CurrentState != puzzleButton.CorrectState)
                 return false;
         }
 
@@ -215,8 +212,8 @@ public class Puzzle3Manager : BasePuzzle
             if (puzzleButton.Button == null)
                 continue;
 
-            puzzleButton.Button.OnMinLimitReached.RemoveAllListeners();
-            puzzleButton.Button.OnMaxLimitReached.RemoveAllListeners();
+            puzzleButton.Button.StateChanged.RemoveAllListeners();
+            puzzleButton.Button.StateChanged.RemoveAllListeners();
         }
     }
 
@@ -236,5 +233,7 @@ public class Puzzle3Manager : BasePuzzle
         {
             lampada.enabled = IsEnabled;
         }
+
+        directionalLight.enabled = false;
     }
 }
