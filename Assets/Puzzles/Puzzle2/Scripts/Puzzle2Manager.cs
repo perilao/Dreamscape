@@ -106,13 +106,13 @@ public class Puzzle2Manager : BasePuzzle
         Debug.Log("Puzzle 2 concluído!");
     }
 
-    public override void DisablePuzzle()
-    {
-        foreach (PictureSocket socket in pictureSockets)
-        {
-            socket.gameObject.SetActive(false);
-        }
-    }
+    //public override void DisablePuzzle()
+    //{
+    //    foreach (PictureSocket socket in pictureSockets)
+    //    {
+    //socket.gameObject.SetActive(false);
+    //}
+    // }
 
     private void SetupPictures()
     {
