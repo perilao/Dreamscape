@@ -1,13 +1,38 @@
 fileFormatVersion: 2
-guid: 9ae71b6d2e50f8a4e97c10ba710327a7
+guid: 3da393de7132aa841961fd2b3d3f6e32
 ModelImporter:
   serializedVersion: 24600
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: TEXTURA_METAL_PRETO
+    second: {fileID: 2100000, guid: faadf1a77da0b0e4fa7849ab6a8a959d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: TEXTURA_METAL_PRETO.001
+    second: {fileID: 2100000, guid: faadf1a77da0b0e4fa7849ab6a8a959d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: TEXTURA_OLHO
+    second: {fileID: 2100000, guid: cb4d9bc8b60c203439cdd39058d5f3d6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: TEXTURA_PLASTICO_BRANCO
+    second: {fileID: 2100000, guid: 5d29f3e1c2be10446b40d54e1845beff, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: TEXTURA_PLASTICO_CINZA
+    second: {fileID: 2100000, guid: 07bac7fd4ca8a4746b208936f5b09e4b, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
-    materialSearch: 1
+    materialSearch: 2
     materialLocation: 1
     searchTexturesGlobally: 0
   animations:
