@@ -19,6 +19,7 @@ public class Puzzle2Manager : BasePuzzle
 
     [Header("Room Game Objects")]
     [SerializeField] private GameObject laptop;
+    [SerializeField] private GameObject laptop_nightmare;
     [SerializeField] private GameObject bed;
     [SerializeField] private GameObject window;
     [SerializeField] private GameObject wardrobe;
@@ -26,10 +27,14 @@ public class Puzzle2Manager : BasePuzzle
     [SerializeField] private Light roomLight2;
     [SerializeField] private Light directionalLight;
     [SerializeField] private Light bathLight;
-    [SerializeField] private InteractablePicture painting1;
-    [SerializeField] private InteractablePicture painting2;
-    [SerializeField] private InteractablePicture painting3;
-    [SerializeField] private InteractablePicture painting4;
+    [SerializeField] private GameObject painting1;
+    [SerializeField] private GameObject painting2;
+    [SerializeField] private GameObject painting3;
+    [SerializeField] private GameObject painting4;
+    [SerializeField] private InteractablePicture chess1;
+    [SerializeField] private InteractablePicture chess2;
+    [SerializeField] private InteractablePicture chess3;
+    [SerializeField] private InteractablePicture chess4;
 
     [Header("Puzzle Room Setup")]
     [SerializeField] private Transform laptopTransform;
@@ -69,6 +74,16 @@ public class Puzzle2Manager : BasePuzzle
         EnterRoomCollider.OnPlayerEnteredRoom.AddListener(OnPlayerEnteredRoom);
 
         EnterRoomCollider.gameObject.SetActive(true);
+
+        laptop_nightmare.gameObject.SetActive(true);
+
+        chess1.gameObject.SetActive(true);
+
+        chess2.gameObject.SetActive(true);
+
+        chess3.gameObject.SetActive(true);
+
+        chess4.gameObject.SetActive(true);
     }
 
     public override void ResetPuzzle()
@@ -91,13 +106,13 @@ public class Puzzle2Manager : BasePuzzle
         Debug.Log("Puzzle 2 concluído!");
     }
 
-    public override void DisablePuzzle()
-    {
-        foreach (PictureSocket socket in pictureSockets)
-        {
-            socket.gameObject.SetActive(false);
-        }
-    }
+    //public override void DisablePuzzle()
+    //{
+    //    foreach (PictureSocket socket in pictureSockets)
+    //    {
+    //socket.gameObject.SetActive(false);
+    //}
+    // }
 
     private void SetupPictures()
     {
@@ -107,7 +122,7 @@ public class Puzzle2Manager : BasePuzzle
             socket.PicturePlaced += OnPictureChanged;
         }
 
-        InteractablePicture[] pictures = new[] { painting1, painting2, painting3, painting4 };
+        InteractablePicture[] pictures = new[] { chess1, chess2, chess3, chess4 };
 
         foreach (InteractablePicture picture in pictures)
         {
@@ -161,10 +176,10 @@ public class Puzzle2Manager : BasePuzzle
         }
         if (roomLight != null)
         {
-            roomLight.color = new(0.7056604f, 0f, 0.04969675f);
+            //roomLight.color = new(0.7056604f, 0f, 0.04969675f);
             roomLight.enabled = true;
 
-            roomLight2.color = new(0.7056604f, 0f, 0.04969675f);
+            //roomLight2.color = new(0.7056604f, 0f, 0.04969675f);
             roomLight2.enabled = true;
 
             //directionalLight.color = new(0.7056604f, 0f, 0.04969675f);

@@ -1,13 +1,33 @@
 fileFormatVersion: 2
-guid: 5e20f02ac9e5f5f4b8b28b62dc3914a8
+guid: ba6d4998da9d3594cb2c69bb45e1933d
 ModelImporter:
   serializedVersion: 24600
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: TEXTURA_PLASTICO_AMARELO_PASTEL
+    second: {fileID: 2100000, guid: 176cf080a5914e64492f577571f2283b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: TEXTURA_PLASTICO_PRETO
+    second: {fileID: 2100000, guid: 8077083b421ec4147ba2a1199964d347, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: TEXTURA_PLASTICO_ROXO
+    second: {fileID: 2100000, guid: c2b38796b1bc2b741899c825321cdae8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: TEXTURA_PLASTICO_VERDE
+    second: {fileID: 2100000, guid: 45d469f2ab8f6df47b3b6e42dd9590fa, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
-    materialSearch: 1
+    materialSearch: 2
     materialLocation: 1
     searchTexturesGlobally: 0
   animations:

@@ -33,6 +33,8 @@ public class Puzzle3Manager : BasePuzzle
 
     [SerializeField] private GameObject mirrorReferences;
 
+    [SerializeField] private GameObject mirrorDream;
+
     private List<Puzzle3ButtonState> ButtonsSequencerTemp = new();
 
     [Header("Áudio")]
@@ -154,6 +156,8 @@ public class Puzzle3Manager : BasePuzzle
             hotValveButton.GetComponent<BoxCollider>().enabled = false;
 
             hotValveButton.ForceRelease();
+
+            mirrorDream.SetActive(false);
 
             mirrorReferences.SetActive(true);
         }
