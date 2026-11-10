@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
+using UnityEngine.SceneManagement;
 
 public class Puzzle2Manager : BasePuzzle
 {
