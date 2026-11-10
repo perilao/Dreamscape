@@ -33,6 +33,8 @@ public class Puzzle3Manager : BasePuzzle
 
     [SerializeField] private GameObject mirrorReferences;
 
+    [SerializeField] private GameObject vaporBanheiro;
+
     [SerializeField] private GameObject mirrorDream;
 
     private List<Puzzle3ButtonState> ButtonsSequencerTemp = new();
@@ -41,6 +43,7 @@ public class Puzzle3Manager : BasePuzzle
     [SerializeField] private AudioSource music;
     [SerializeField] private AudioSource susurro;
     [SerializeField] private AudioSource openDoor;
+    [SerializeField] private AudioSource espelhoDerretendo;
 
     public override void InitializePuzzle()
     {
@@ -160,6 +163,10 @@ public class Puzzle3Manager : BasePuzzle
             mirrorDream.SetActive(false);
 
             mirrorReferences.SetActive(true);
+
+            vaporBanheiro.SetActive(true);
+
+            espelhoDerretendo.Play();
         }
     }
 
