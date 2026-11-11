@@ -476,14 +476,72 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06dc92389dfd98f4682e4099335addb7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneController
-  introAudio: {fileID: 8300000, guid: 17504ca2f94229840bce616c21cf3a97, type: 3}
+  introAudio: {fileID: 8300000, guid: e5af02ee4a0b5684981029a06269be3b, type: 3}
   audioSource: {fileID: 1926660167}
   audioVolume: 0.467
   audioDelay: 0
-  loopAudio: 0
-  triggerCollider: {fileID: 364444002}
+  spriteCues:
+  - label: Dream
+    sprite: {fileID: 298693782}
+    intervals:
+    - showAtTime: 0
+      hideAtTime: 59.6
+      fadeInDuration: 0.2
+      fadeOutDuration: 0.2
+    - showAtTime: 60
+      hideAtTime: 60.1
+      fadeInDuration: 0.2
+      fadeOutDuration: 0.2
+    - showAtTime: 60.2
+      hideAtTime: 60.3
+      fadeInDuration: 0.2
+      fadeOutDuration: 0.2
+    - showAtTime: 60.4
+      hideAtTime: 60.5
+      fadeInDuration: 0.2
+      fadeOutDuration: 0.2
+    - showAtTime: 60.6
+      hideAtTime: 60.7
+      fadeInDuration: 0.2
+      fadeOutDuration: 0.2
+    - showAtTime: 61
+      hideAtTime: 61.1
+      fadeInDuration: 0.2
+      fadeOutDuration: 0.2
+    - showAtTime: 61.2
+      hideAtTime: 61.3
+      fadeInDuration: 0.2
+      fadeOutDuration: 0.2
+    - showAtTime: 61.4
+      hideAtTime: 61.5
+      fadeInDuration: 0.2
+      fadeOutDuration: 0.2
+    - showAtTime: 61.6
+      hideAtTime: 61.7
+      fadeInDuration: 0.2
+      fadeOutDuration: 0.2
+    - showAtTime: 61.8
+      hideAtTime: 63
+      fadeInDuration: 0.2
+      fadeOutDuration: 0.2
+    - showAtTime: 63
+      hideAtTime: 63.1
+      fadeInDuration: 0.2
+      fadeOutDuration: 0.2
+    - showAtTime: 63.2
+      hideAtTime: 63.3
+      fadeInDuration: 0.2
+      fadeOutDuration: 0.2
+    - showAtTime: 63.4
+      hideAtTime: 63.5
+      fadeInDuration: 0.2
+      fadeOutDuration: 0.2
+    - showAtTime: 63.6
+      hideAtTime: -1
+      fadeInDuration: 0.2
+      fadeOutDuration: 0.2
+  triggerCollider: {fileID: 0}
   playerTag: Player
-  triggerOnlyOnce: 1
   puzzle: {fileID: 300075294}
   fadeInDuration: 1.5
   fadeCurve:

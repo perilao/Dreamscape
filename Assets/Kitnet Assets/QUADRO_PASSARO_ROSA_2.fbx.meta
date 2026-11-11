@@ -1,9 +1,19 @@
 fileFormatVersion: 2
-guid: 3bf22c0a669ab3a468bacfee6caf2a76
+guid: 5b5a4ea47c4fb9c46ada2c2eaffbed6a
 ModelImporter:
   serializedVersion: 24600
   internalIDToNameTable: []
   externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material.009
+    second: {fileID: 2100000, guid: 5d29f3e1c2be10446b40d54e1845beff, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: TEXTURA_MADEIRA_MARROM
+    second: {fileID: 2100000, guid: aa3f56fbbc3d40f4cb271639c70c3a95, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
@@ -12,18 +22,13 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: TEXTURA_MADEIRA_MARROM.002
-    second: {fileID: 2100000, guid: aa3f56fbbc3d40f4cb271639c70c3a95, type: 2}
+      name: TEXTURA_QUADRO_PASSARO
+    second: {fileID: 2100000, guid: 62726a5bf5e377942a929e346c69858a, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: TEXTURA_QUADRO_CACHORRO.001
-    second: {fileID: 2100000, guid: 4c7c1036390a7a74d802cae4433660a4, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: TEXTURA_QUADRO_CACHORRO.002
-    second: {fileID: 2100000, guid: 4c7c1036390a7a74d802cae4433660a4, type: 2}
+      name: TEXTURA_QUADRO_PASSARO.001
+    second: {fileID: 2100000, guid: 62726a5bf5e377942a929e346c69858a, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

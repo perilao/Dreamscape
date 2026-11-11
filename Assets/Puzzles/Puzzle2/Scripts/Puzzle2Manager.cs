@@ -42,10 +42,10 @@ public class Puzzle2Manager : BasePuzzle
     [SerializeField] private Transform bedTransform;
     [SerializeField] private Transform windowTransform;
     [SerializeField] private Transform wardrobeTransform;
-    [SerializeField] private Transform painting1Transform;
-    [SerializeField] private Transform painting2Transform;
-    [SerializeField] private Transform painting3Transform;
-    [SerializeField] private Transform painting4Transform;
+    [SerializeField] private GameObject painting1Transform;
+    [SerializeField] private GameObject painting2Transform;
+    [SerializeField] private GameObject painting3Transform;
+    [SerializeField] private GameObject painting4Transform;
 
     [Header("Áudio")]
     [SerializeField] private AudioSource music;
@@ -134,6 +134,23 @@ public class Puzzle2Manager : BasePuzzle
     private void SetupPuzzleRoom()
     {
         // Set the positions, rotations and scales of the room objects based on the predefined transforms
+
+        painting1.SetActive(false);
+
+        painting2.SetActive(false);
+
+        painting3.SetActive(false);
+
+        painting4.SetActive(false);
+
+        painting1Transform.SetActive(true);
+
+        painting2Transform.SetActive(true);
+
+        painting3Transform.SetActive(true);
+
+        painting4Transform.SetActive(true);
+
         if (laptop != null)
         {
             laptop.transform.SetLocalPositionAndRotation(laptopTransform.position, laptopTransform.rotation);
@@ -155,33 +172,16 @@ public class Puzzle2Manager : BasePuzzle
             wardrobe.transform.SetLocalPositionAndRotation(wardrobeTransform.position, wardrobeTransform.rotation);
             wardrobe.transform.localScale = wardrobeTransform.localScale;
         }
-        if (painting1 != null)
-        {
-            painting1.transform.SetLocalPositionAndRotation(painting1Transform.position, painting1Transform.rotation);
-            painting1.transform.localScale = painting1Transform.localScale;
-        }
-        if (painting2 != null)
-        {
-            painting2.transform.SetLocalPositionAndRotation(painting2Transform.position, painting2Transform.rotation);
-            painting2.transform.localScale = painting2Transform.localScale;
-        }
-        if (painting3 != null)
-        {
-            painting3.transform.SetLocalPositionAndRotation(painting3Transform.position, painting3Transform.rotation);
-            painting3.transform.localScale = painting3Transform.localScale;
-        }
-        if (painting4 != null)
-        {
-            painting4.transform.SetLocalPositionAndRotation(painting4Transform.position, painting4Transform.rotation);
-            painting4.transform.localScale = painting4Transform.localScale;
-        }
+
         if (roomLight != null)
         {
-            //roomLight.color = new(0.7056604f, 0f, 0.04969675f);
+            roomLight.color = new(0.7056604f, 0f, 0.04969675f);
             roomLight.enabled = true;
+            roomLight.GetComponent<LightFlicker>().enabled = true;
 
             //roomLight2.color = new(0.7056604f, 0f, 0.04969675f);
             roomLight2.enabled = true;
+            roomLight2.GetComponent<LightFlicker>().enabled = true;
 
             //directionalLight.color = new(0.7056604f, 0f, 0.04969675f);
             directionalLight.enabled = false;

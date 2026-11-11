@@ -6,16 +6,58 @@ using UnityEngine.UI;
 /// <summary>
 /// Controla a cena atual:
 ///  1. Toca o áudio inicial quando a cena começa.
-///  2. Detecta quando o jogador atravessa um collider (trigger).
-///  3. Ativa o puzzle (SetActive true) com um fade in gradual.
+///  2. Faz sprites 2D aparecerem e sumirem (com fade) em momentos específicos do áudio.
+///     Cada sprite pode ter VÁRIOS intervalos, então ele pode piscar quantas vezes você quiser.
+///  3. Quando o áudio acaba, os sprites que ainda estão visíveis somem com fade out.
+///  4. O puzzle só aparece (SetActive true + fade in) depois que o áudio acaba.
+///     Se um Trigger Collider for atribuído, o jogador também precisa ter atravessado ele.
 ///
 /// Compatível com Unity 6 (URP). Coloque este script em um objeto vazio da cena
 /// (ex.: "SceneController") e preencha os campos no Inspector.
 /// </summary>
 public class SceneController : MonoBehaviour
 {
+    // ---------------- Dados dos sprites sincronizados com o áudio ----------------
+
+    /// <summary>Um período em que o sprite fica visível.</summary>
+    [System.Serializable]
+    public class SpriteInterval
+    {
+        [Tooltip("Segundo do áudio em que o sprite aparece.")]
+        [Min(0f)] public float showAtTime = 0f;
+
+        [Tooltip("Segundo do áudio em que o sprite some. -1 = fica até o áudio acabar.")]
+        public float hideAtTime = -1f;
+
+        [Tooltip("Duração do fade ao aparecer. Use valores pequenos (0 a 0.1) para um piscar rápido.")]
+        [Min(0f)] public float fadeInDuration = 0.1f;
+
+        [Tooltip("Duração do fade ao sumir. Use valores pequenos (0 a 0.1) para um piscar rápido.")]
+        [Min(0f)] public float fadeOutDuration = 0.1f;
+    }
+
+    [System.Serializable]
+    public class SpriteCue
+    {
+        [Tooltip("Nome só para organizar a lista.")]
+        public string label;
+
+        [Tooltip("Sprite 2D que vai aparecer e sumir.")]
+        public SpriteRenderer sprite;
+
+        [Tooltip("Períodos em que o sprite fica visível. Adicione vários para ele piscar.")]
+        public List<SpriteInterval> intervals = new List<SpriteInterval>();
+
+        // Estado interno (não aparece no Inspector).
+        [System.NonSerialized] public float baseAlpha = 1f;
+        [System.NonSerialized] public float visibility;
+        [System.NonSerialized] public bool targetVisible;
+        [System.NonSerialized] public SpriteInterval lastActive;
+        [System.NonSerialized] public Coroutine routine;
+    }
+
     [Header("Áudio inicial")]
-    [Tooltip("Áudio que toca assim que a cena começa.")]
+    [Tooltip("Áudio que toca assim que a cena começa. O puzzle aparece quando ele termina.")]
     [SerializeField] private AudioClip introAudio;
 
     [Tooltip("Opcional. Se vazio, um AudioSource é criado automaticamente.")]
@@ -27,27 +69,28 @@ public class SceneController : MonoBehaviour
     [Tooltip("Atraso (em segundos) antes de tocar o áudio.")]
     [SerializeField] private float audioDelay = 0f;
 
-    [SerializeField] private bool loopAudio = false;
+    [Header("Sprites sincronizados com o áudio")]
+    [Tooltip("Cada item controla um sprite e os intervalos em que ele fica visível.")]
+    [SerializeField] private List<SpriteCue> spriteCues = new List<SpriteCue>();
 
-    [Header("Detecção do jogador")]
-    [Tooltip("Collider que o jogador vai atravessar. Ele será configurado como Trigger automaticamente.")]
+    [Header("Detecção do jogador (opcional)")]
+    [Tooltip("Se atribuído, o puzzle só aparece quando o áudio acabou E o jogador atravessou este collider. Deixe vazio para ignorar.")]
     [SerializeField] private Collider triggerCollider;
 
     [Tooltip("Tag do jogador. Deixe vazio para aceitar qualquer objeto.")]
     [SerializeField] private string playerTag = "Player";
 
-    [Tooltip("Se ligado, o puzzle só é ativado na primeira vez que o jogador passar.")]
-    [SerializeField] private bool triggerOnlyOnce = true;
-
     [Header("Puzzle")]
-    [Tooltip("GameObject do puzzle. Ele começa desativado e aparece com fade in.")]
+    [Tooltip("GameObject do puzzle. Ele começa desativado e aparece com fade in no fim do áudio.")]
     [SerializeField] private GameObject puzzle;
 
     [SerializeField] private float fadeInDuration = 1.5f;
 
     [SerializeField] private AnimationCurve fadeCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
 
-    private bool alreadyTriggered;
+    private bool audioFinished;
+    private bool playerTriggered;
+    private bool puzzleShown;
     private Coroutine fadeRoutine;
 
     // ---------------- Ciclo de vida ----------------
@@ -56,6 +99,14 @@ public class SceneController : MonoBehaviour
     {
         if (puzzle != null)
             puzzle.SetActive(false);
+
+        // Todos os sprites começam invisíveis.
+        foreach (SpriteCue cue in spriteCues)
+        {
+            if (cue.sprite == null) continue;
+            cue.baseAlpha = cue.sprite.color.a;
+            SetCueAlpha(cue, 0f);
+        }
 
         if (triggerCollider != null)
         {
@@ -67,22 +118,23 @@ public class SceneController : MonoBehaviour
                 relay = triggerCollider.gameObject.AddComponent<TriggerRelay>();
             relay.Setup(this);
         }
-        else
-        {
-            Debug.LogWarning("[SceneController] Nenhum Trigger Collider atribuído no Inspector.", this);
-        }
     }
 
     private void Start()
     {
-        PlayIntroAudio();
+        StartCoroutine(AudioRoutine());
     }
 
-    // ---------------- Áudio ----------------
+    // ---------------- Áudio + sprites ----------------
 
-    private void PlayIntroAudio()
+    private IEnumerator AudioRoutine()
     {
-        if (introAudio == null) return;
+        // Sem áudio: considera que ele já terminou.
+        if (introAudio == null)
+        {
+            OnAudioFinished();
+            yield break;
+        }
 
         if (audioSource == null)
         {
@@ -92,26 +144,137 @@ public class SceneController : MonoBehaviour
 
         audioSource.clip = introAudio;
         audioSource.volume = audioVolume;
-        audioSource.loop = loopAudio;
+        audioSource.loop = false; // precisa terminar para liberar o puzzle
         audioSource.spatialBlend = 0f; // 2D: o volume não depende da posição
 
         if (audioDelay > 0f)
-            audioSource.PlayDelayed(audioDelay);
-        else
-            audioSource.Play();
+            yield return new WaitForSeconds(audioDelay);
+
+        audioSource.Play();
+        yield return null; // garante que isPlaying já esteja true
+
+        // Acompanha o tempo do áudio enquanto ele toca.
+        while (audioSource.isPlaying || !Application.isFocused)
+        {
+            UpdateCues(audioSource.time);
+            yield return null;
+        }
+
+        OnAudioFinished();
+    }
+
+    private void UpdateCues(float time)
+    {
+        foreach (SpriteCue cue in spriteCues)
+        {
+            if (cue.sprite == null) continue;
+
+            // Procura um intervalo que esteja valendo neste momento do áudio.
+            SpriteInterval active = null;
+            foreach (SpriteInterval interval in cue.intervals)
+            {
+                if (time >= interval.showAtTime && (interval.hideAtTime < 0f || time < interval.hideAtTime))
+                {
+                    active = interval;
+                    break;
+                }
+            }
+
+            bool shouldBeVisible = active != null;
+
+            if (shouldBeVisible != cue.targetVisible)
+            {
+                cue.targetVisible = shouldBeVisible;
+
+                if (shouldBeVisible)
+                {
+                    cue.lastActive = active;
+                    FadeCue(cue, 1f, active.fadeInDuration);
+                }
+                else
+                {
+                    // Usa o fade out do intervalo que acabou de terminar.
+                    float duration = cue.lastActive != null ? cue.lastActive.fadeOutDuration : 0.1f;
+                    FadeCue(cue, 0f, duration);
+                }
+            }
+            else if (shouldBeVisible)
+            {
+                cue.lastActive = active; // intervalos colados: guarda o atual
+            }
+        }
+    }
+
+    private void OnAudioFinished()
+    {
+        audioFinished = true;
+
+        // Quem ainda está visível some com fade out.
+        foreach (SpriteCue cue in spriteCues)
+        {
+            if (cue.sprite == null || !cue.targetVisible) continue;
+
+            cue.targetVisible = false;
+            float duration = cue.lastActive != null ? cue.lastActive.fadeOutDuration : 0.5f;
+            FadeCue(cue, 0f, duration);
+        }
+
+        TryShowPuzzle();
+    }
+
+    private void FadeCue(SpriteCue cue, float target, float duration)
+    {
+        if (cue.routine != null)
+            StopCoroutine(cue.routine);
+
+        cue.routine = StartCoroutine(FadeCueRoutine(cue, target, duration));
+    }
+
+    private IEnumerator FadeCueRoutine(SpriteCue cue, float target, float duration)
+    {
+        float from = cue.visibility;
+
+        if (duration <= 0f)
+        {
+            SetCueAlpha(cue, target);
+            cue.routine = null;
+            yield break;
+        }
+
+        float t = 0f;
+        while (t < duration)
+        {
+            t += Time.deltaTime;
+            SetCueAlpha(cue, Mathf.Lerp(from, target, fadeCurve.Evaluate(Mathf.Clamp01(t / duration))));
+            yield return null;
+        }
+
+        SetCueAlpha(cue, target);
+        cue.routine = null;
+    }
+
+    private static void SetCueAlpha(SpriteCue cue, float visibility)
+    {
+        cue.visibility = visibility;
+
+        Color c = cue.sprite.color;
+        c.a = cue.baseAlpha * visibility;
+        cue.sprite.color = c;
+
+        cue.sprite.enabled = visibility > 0f; // desliga o renderer quando invisível
     }
 
     // ---------------- Trigger ----------------
 
     private void HandleTriggerEnter(Collider other)
     {
-        if (triggerOnlyOnce && alreadyTriggered) return;
+        if (playerTriggered) return;
 
         // Procura a tag no próprio objeto e nos pais (útil quando o collider está na câmera/mãos do XR Rig).
         if (!string.IsNullOrEmpty(playerTag) && !HasTagInParents(other.transform, playerTag)) return;
 
-        alreadyTriggered = true;
-        ShowPuzzle();
+        playerTriggered = true;
+        TryShowPuzzle();
     }
 
     private static bool HasTagInParents(Transform t, string tag)
@@ -125,6 +288,15 @@ public class SceneController : MonoBehaviour
     }
 
     // ---------------- Puzzle ----------------
+
+    private void TryShowPuzzle()
+    {
+        if (puzzleShown || !audioFinished) return;
+        if (triggerCollider != null && !playerTriggered) return;
+
+        puzzleShown = true;
+        ShowPuzzle();
+    }
 
     /// <summary>Ativa o puzzle com fade in. Também pode ser chamado por outros scripts ou UnityEvents.</summary>
     public void ShowPuzzle()
