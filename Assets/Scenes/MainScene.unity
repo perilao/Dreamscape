@@ -655,7 +655,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 55b2f6d0079b4044aa3df7317b313df4, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -25866,9 +25866,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   PuzzleManagers:
-  - {fileID: 1462777531}
   - {fileID: 1298126715006739274}
   - {fileID: 1022379440}
+  - {fileID: 1462777531}
 --- !u!4 &658872017
 Transform:
   m_ObjectHideFlags: 0
