@@ -17,6 +17,8 @@ public class Puzzle2Manager : BasePuzzle
 
     [Header("ExitDoor")]
     [SerializeField] private InteractableDoor exitdoorInteractable;
+    [SerializeField] private GameObject crayonDoor;
+    [SerializeField] private GameObject realDoor;
 
     [Header("Room Game Objects")]
     [SerializeField] private GameObject laptop;
@@ -28,6 +30,8 @@ public class Puzzle2Manager : BasePuzzle
     [SerializeField] private Light roomLight2;
     [SerializeField] private Light directionalLight;
     [SerializeField] private Light bathLight;
+    [SerializeField] private Material novoSkybox;
+    [SerializeField] private Color novaCorFog = Color.gray;
     [SerializeField] private GameObject painting1;
     [SerializeField] private GameObject painting2;
     [SerializeField] private GameObject painting3;
@@ -85,6 +89,10 @@ public class Puzzle2Manager : BasePuzzle
         chess3.gameObject.SetActive(true);
 
         chess4.gameObject.SetActive(true);
+
+        crayonDoor.gameObject.SetActive(false);
+
+        realDoor.gameObject.SetActive(true);
     }
 
     public override void ResetPuzzle()
@@ -151,6 +159,10 @@ public class Puzzle2Manager : BasePuzzle
 
         painting4Transform.SetActive(true);
 
+        RenderSettings.skybox = novoSkybox;
+
+        RenderSettings.fogColor = novaCorFog;
+
         if (laptop != null)
         {
             laptop.transform.SetLocalPositionAndRotation(laptopTransform.position, laptopTransform.rotation);
@@ -183,8 +195,8 @@ public class Puzzle2Manager : BasePuzzle
             roomLight2.enabled = true;
             roomLight2.GetComponent<LightFlicker>().enabled = true;
 
-            //directionalLight.color = new(0.7056604f, 0f, 0.04969675f);
-            directionalLight.enabled = false;
+            directionalLight.color = new Color32(173,25,165,255);
+            //directionalLight.enabled = false;
 
             bathLight.enabled = false;
         }
