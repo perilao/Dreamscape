@@ -37,6 +37,8 @@ public class Puzzle3Manager : BasePuzzle
 
     [SerializeField] private GameObject mirrorDream;
 
+    [SerializeField] private GameObject dream_tv_show;
+
     private List<Puzzle3ButtonState> ButtonsSequencerTemp = new();
 
     [Header("Áudio")]
@@ -72,8 +74,12 @@ public class Puzzle3Manager : BasePuzzle
 
         doorInteractable.OpenDoor();
 
+        dream_tv_show.gameObject.SetActive(false);
+
         music.Play();
+
         openDoor.Play();
+
         susurro.Play();
     }
 

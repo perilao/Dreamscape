@@ -40,6 +40,7 @@ public class Puzzle2Manager : BasePuzzle
     [SerializeField] private InteractablePicture chess2;
     [SerializeField] private InteractablePicture chess3;
     [SerializeField] private InteractablePicture chess4;
+    
 
     [Header("Puzzle Room Setup")]
     [SerializeField] private Transform laptopTransform;
@@ -92,7 +93,7 @@ public class Puzzle2Manager : BasePuzzle
 
         crayonDoor.gameObject.SetActive(false);
 
-        realDoor.gameObject.SetActive(true);
+        realDoor.gameObject.SetActive(false);
     }
 
     public override void ResetPuzzle()

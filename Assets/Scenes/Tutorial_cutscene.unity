@@ -2979,113 +2979,6 @@ MonoBehaviour:
   randomVariation: 0.2
   tiltAmount: 2
   tiltSpeed: 0.3
---- !u!1 &1176001453
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1176001454}
-  - component: {fileID: 1176001455}
-  - component: {fileID: 1176001456}
-  m_Layer: 0
-  m_Name: SceneTransition
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1176001454
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1176001453}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.38767, y: -3.2489, z: 9.06795}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1176001455
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1176001453}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 34cd95bd6fa270d459b19d1fbdeb757a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SceneTransition
-  fadeColor: {r: 0, g: 0, b: 0, a: 1}
-  fadeOutDuration: 2
-  fadeInDuration: 2
-  fadeCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  minimumBlackTime: 0.1
-  fadeInOnStart: 1
---- !u!114 &1176001456
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1176001453}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e52de21a22b6dd44c9cc19f810c65059, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Timeline::UnityEngine.Timeline.SignalReceiver
-  m_Events:
-    m_Signals:
-    - {fileID: 11400000, guid: e50a49f752a30714f820f473364a6fbf, type: 2}
-    - {fileID: 11400000, guid: 3f60c798186745447bbd5b3860be9e8c, type: 2}
-    m_Events:
-    - m_PersistentCalls:
-        m_Calls: []
-    - m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 1176001455}
-          m_TargetAssemblyTypeName: SceneTransition, Assembly-CSharp
-          m_MethodName: LoadScene
-          m_Mode: 5
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: Tutorial
-            m_BoolArgument: 0
-          m_CallState: 2
 --- !u!1001 &1197558176
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3480,6 +3373,82 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a35eb58bf564a1846b5c78e8ffe238dc, type: 3}
+--- !u!1 &1400775835
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1400775837}
+  - component: {fileID: 1400775836}
+  - component: {fileID: 1400775838}
+  m_Layer: 0
+  m_Name: SceneChanger
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1400775836
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1400775835}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83421cca8a4a85f4eac9f12437911f2f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SceneChanger
+  sceneName: Tutorial
+--- !u!4 &1400775837
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1400775835}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -5.45875, y: -4.74, z: 10.84892}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1400775838
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1400775835}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e52de21a22b6dd44c9cc19f810c65059, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Timeline::UnityEngine.Timeline.SignalReceiver
+  m_Events:
+    m_Signals:
+    - {fileID: 11400000, guid: 3f60c798186745447bbd5b3860be9e8c, type: 2}
+    m_Events:
+    - m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1400775836}
+          m_TargetAssemblyTypeName: SceneChanger, Assembly-CSharp
+          m_MethodName: LoadConfiguredScene
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &1455103962
 GameObject:
   m_ObjectHideFlags: 0
@@ -4207,15 +4176,19 @@ PlayableDirector:
   - key: {fileID: 5335712965915090496, guid: 684d6e3e2e647b442b486a1a6cb229ab, type: 2}
     value: {fileID: 1821714857}
   - key: {fileID: -19637937962400591, guid: 684d6e3e2e647b442b486a1a6cb229ab, type: 2}
-    value: {fileID: 1176001456}
+    value: {fileID: 1400775838}
   m_ExposedReferences:
     m_References:
+    - d518ea56dc65db141abd9e7c3a049c0e: {fileID: 44184556}
     - 79503d14e2c17664dbb497fb75ddf08d: {fileID: 159490598}
     - c86df253bb40e3349bb436e724e5c847: {fileID: 32706773}
+    - c3375aeef3782904baa6f618b91c8aa8: {fileID: 1216771472}
     - abe47e8eed65b3544b032ad283c968dc: {fileID: 1216771472}
-    - 9add53db080e77f40adaaed763471707: {fileID: 1176001453}
+    - 9add53db080e77f40adaaed763471707: {fileID: 0}
     - ab8e8f1c30d4eb84681c86e9a1aeb44c: {fileID: 1455103963}
     - 2f7e29d3d2fc1be43944c02baa64bfb5: {fileID: 297742988}
+    - 80c9077e3a961cc4987e42dc78be82fb: {fileID: 32706773}
+    - 8cc78d0e501f49c41b428c2da7e082f1: {fileID: 1455103963}
     - 40f4b1b44f740e04ca84ecb6a12ee432: {fileID: 44184556}
 --- !u!4 &1793155680
 Transform:
@@ -5499,7 +5472,6 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 2116384074}
-  - {fileID: 1176001454}
   - {fileID: 1959556548}
   - {fileID: 1214031487}
   - {fileID: 999188761}
@@ -5508,4 +5480,5 @@ SceneRoots:
   - {fileID: 298693783}
   - {fileID: 1793155680}
   - {fileID: 159490599}
+  - {fileID: 1400775837}
   - {fileID: 1206991763}

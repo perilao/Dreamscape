@@ -60,6 +60,20 @@ public class ScaleOpener : MonoBehaviour
     private float progress;      // 0 = fechado, 1 = aberto
     private Coroutine routine;
 
+    [SerializeField] private ScaleOpener door;
+    [SerializeField] private string playerTag = "Player";
+    [SerializeField] private SceneChanger changer;
+
+    [Header("Abrir por colisão (opcional)")]
+    [Tooltip("Collider da zona. Use um objeto SEPARADO da porta.")]
+    [SerializeField] private Collider triggerCollider;
+
+    [Tooltip("Collider do jogador para comparar. Se vazio, usa a tag.")]
+    [SerializeField] private Collider playerCollider;
+
+    [Tooltip("Fecha a porta quando o jogador sai da zona.")]
+    [SerializeField] private bool closeOnExit = false;
+
     public bool IsOpen => progress >= 1f;
 
     private void Awake()
@@ -74,6 +88,8 @@ public class ScaleOpener : MonoBehaviour
 
         progress = startOpen ? 1f : 0f;
         Apply(progress);
+
+        SetupTrigger();
     }
 
     private void Start()
@@ -140,5 +156,78 @@ public class ScaleOpener : MonoBehaviour
         float sign = anchor == Anchor.NegativeEdge ? 1f : anchor == Anchor.PositiveEdge ? -1f : 0f;
         Vector3 dir = transform.localRotation * axisVector;
         transform.localPosition = openPosition + dir * ((s - openScale) * meshSize * 0.5f * sign);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (!other.CompareTag(playerTag))
+        {
+            return;
+        }
+
+        if (changer == null)
+        {
+            return;
+        }
+        changer.LoadConfiguredScene();
+    }
+
+    private void SetupTrigger()
+    {
+        if (triggerCollider == null) return;
+
+        triggerCollider.isTrigger = true;
+
+        var relay = triggerCollider.gameObject.GetComponent<TriggerRelay>();
+        if (relay == null)
+            relay = triggerCollider.gameObject.AddComponent<TriggerRelay>();
+        relay.Setup(this);
+    }
+
+    private bool IsPlayer(Collider other)
+    {
+        if (playerCollider != null)
+            return other == playerCollider;
+
+        if (string.IsNullOrEmpty(playerTag))
+            return true;
+
+        Transform t = other.transform;
+        while (t != null)
+        {
+            if (t.CompareTag(playerTag)) return true;
+            t = t.parent;
+        }
+
+        return false;
+    }
+
+    private void HandleTriggerEnter(Collider other)
+    {
+        if (IsPlayer(other))
+            Open();
+    }
+
+    private void HandleTriggerExit(Collider other)
+    {
+        if (closeOnExit && IsPlayer(other))
+            Close();
+    }
+
+    private class TriggerRelay : MonoBehaviour
+    {
+        private ScaleOpener owner;
+
+        public void Setup(ScaleOpener opener) => owner = opener;
+
+        private void OnTriggerEnter(Collider other)
+        {
+            if (owner != null) owner.HandleTriggerEnter(other);
+        }
+
+        private void OnTriggerExit(Collider other)
+        {
+            if (owner != null) owner.HandleTriggerExit(other);
+        }
     }
 }
