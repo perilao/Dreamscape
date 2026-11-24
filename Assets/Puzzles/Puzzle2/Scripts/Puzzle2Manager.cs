@@ -93,7 +93,7 @@ public class Puzzle2Manager : BasePuzzle
 
         crayonDoor.gameObject.SetActive(false);
 
-        realDoor.gameObject.SetActive(false);
+        realDoor.gameObject.SetActive(true);
     }
 
     public override void ResetPuzzle()

@@ -26233,9 +26233,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   PuzzleManagers:
-  - {fileID: 1462777531}
   - {fileID: 1298126715006739274}
   - {fileID: 1022379440}
+  - {fileID: 1462777531}
 --- !u!4 &658872017
 Transform:
   m_ObjectHideFlags: 0
@@ -39177,7 +39177,7 @@ MonoBehaviour:
   mirrorReferences: {fileID: 599172615}
   vaporBanheiro: {fileID: 278244439}
   mirrorDream: {fileID: 109416693}
-  dream_tv_show: {fileID: 0}
+  dream_tv_show: {fileID: 258198656}
   music: {fileID: 420485933}
   susurro: {fileID: 1159757384}
   openDoor: {fileID: 1261390087}
