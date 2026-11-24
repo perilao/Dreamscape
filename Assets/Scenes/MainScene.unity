@@ -17032,7 +17032,7 @@ MonoBehaviour:
     visibleTime: 0.3
     fadeInDuration: 0.1
     fadeOutDuration: 0.1
-  hiddenTime: 40
+  hiddenTime: 30
   fadeCurve:
     serializedVersion: 2
     m_Curve:
@@ -17057,9 +17057,9 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  randomVariation: 0.2
-  randomOrder: 1
-  randomizeStart: 1
+  randomVariation: 0
+  randomOrder: 0
+  randomizeStart: 0
   disableRendererWhenHidden: 1
 --- !u!1 &394797517
 GameObject:

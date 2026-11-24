@@ -37,7 +37,7 @@ public class Puzzle0Manager : BasePuzzle
     public override void CompletePuzzle()
     {
         base.CompletePuzzle();
-        SceneTransition.LoadScene(2);
+        SceneTransition.LoadScene(3);
 
         Debug.Log("Puzzle 2 concluído!");
     }
