@@ -476,7 +476,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06dc92389dfd98f4682e4099335addb7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneController
-  introAudio: {fileID: 8300000, guid: e5af02ee4a0b5684981029a06269be3b, type: 3}
+  introAudio: {fileID: 8300000, guid: 68119c8734089f14b8cb10ad994a6f45, type: 3}
   audioSource: {fileID: 1926660167}
   audioVolume: 0.467
   audioDelay: 0
@@ -3740,6 +3740,7 @@ GameObject:
   - component: {fileID: 1214031486}
   - component: {fileID: 1214031485}
   - component: {fileID: 1214031484}
+  - component: {fileID: 1214031488}
   m_Layer: 0
   m_Name: ground
   m_TagString: Untagged
@@ -3764,7 +3765,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
@@ -3841,6 +3842,27 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &1214031488
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1214031483}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 10, y: 2.220446e-16, z: 10}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1250259458
 GameObject:
   m_ObjectHideFlags: 0
@@ -3869,7 +3891,7 @@ Transform:
   m_GameObject: {fileID: 1250259458}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: -1.8754, y: -0.19, z: -2.19279}
+  m_LocalPosition: {x: -1.8754, y: -0.11, z: -2.19279}
   m_LocalScale: {x: 0.27, y: 12.587357, z: 12.16}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3903,7 +3925,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1250259458}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -5405,7 +5427,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 8300000, guid: 17504ca2f94229840bce616c21cf3a97, type: 3}
+  m_Resource: {fileID: 8300000, guid: 68119c8734089f14b8cb10ad994a6f45, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
